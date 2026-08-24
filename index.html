@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        .card p {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #e5e7eb;
+        }
+
+        @media (max-width: 700px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Transportation Management</h1>
+    <p>Load & Invoice Tracking System</p>
+</header>
+
+<div class="container">
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h3>Total Loads</h3>
+            <p id="totalLoads">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Completed</h3>
+            <p id="completedLoads">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Pending</h3>
+            <p id="pendingLoads">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <p id="totalRevenue">$0</p>
+        </div>
+
+    </div>
+
+    <div class="form-section">
+
+        <h2>Add Load</h2>
+
+        <div class="form-grid">
+
+            <input type="text" id="loadNumber" placeholder="Load Number">
+
+            <input type="date" id="loadDate">
+
+            <input type="text" id="customer" placeholder="Customer">
+
+            <input type="text" id="driver" placeholder="Driver">
+
+            <input type="text" id="pickup" placeholder="Pickup">
+
+            <input type="text" id="delivery" placeholder="Delivery">
+
+            <input type="number" id="rate" placeholder="Rate">
+
+            <select id="status">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+            </select>
+
+            <button onclick="addLoad()">Add Load</button>
+
+        </div>
+
+    </div>
+
+    <h2>Loads</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Load #</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Driver</th>
+                <th>Pickup</th>
+                <th>Delivery</th>
+                <th>Rate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody id="loadTable"></tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+let loads = [];
+
+function addLoad() {
+
+    const load = {
+
+        loadNumber: document.getElementById("loadNumber").value,
+
+        date: document.getElementById("loadDate").value,
+
+        customer: document.getElementById("customer").value,
+
+        driver: document.getElementById("driver").value,
+
+        pickup: document.getElementById("pickup").value,
+
+        delivery: document.getElementById("delivery").value,
+
+        rate: Number(document.getElementById("rate").value),
+
+        status: document.getElementById("status").value
+
+    };
+
+    loads.push(load);
+
+    displayLoads();
+
+    updateDashboard();
+
+}
+
+function displayLoads() {
+
+    const table = document.getElementById("loadTable");
+
+    table.innerHTML = "";
+
+    loads.forEach(load => {
+
+        const row = `
+
+            <tr>
+
+                <td>${load.loadNumber}</td>
+
+                <td>${load.date}</td>
+
+                <td>${load.customer}</td>
+
+                <td>${load.driver}</td>
+
+                <td>${load.pickup}</td>
+
+                <td>${load.delivery}</td>
+
+                <td>$${load.rate.toFixed(2)}</td>
+
+                <td>${load.status}</td>
+
+            </tr>
+
+        `;
+
+        table.innerHTML += row;
+
+    });
+
+}
+
+function updateDashboard() {
+
+    document.getElementById("totalLoads").textContent = loads.length;
+
+    const completed = loads.filter(
+        load => load.status === "Completed"
+    ).length;
+
+    document.getElementById("completedLoads").textContent = completed;
+
+    document.getElementById("pendingLoads").textContent =
+        loads.length - completed;
+
+    const revenue = loads.reduce(
+        (total, load) => total + load.rate,
+        0
+    );
+
+    document.getElementById("totalRevenue").textContent =
+        "$" + revenue.toFixed(2);
+
+}
+
+</script>
+
+</body>
+</html>
