@@ -367,6 +367,34 @@ th {
 <div class="section">
 
 <h2>Load Records</h2>
+<div class="dashboard">
+
+    <div class="card">
+        <h3>Filtered Loads</h3>
+        <p id="filteredLoads">0</p>
+    </div>
+
+    <div class="card">
+        <h3>Filtered Revenue</h3>
+        <p id="filteredRevenue">$0.00</p>
+    </div>
+
+    <div class="card">
+        <h3>Filtered Invoiced</h3>
+        <p id="filteredInvoiced">$0.00</p>
+    </div>
+
+    <div class="card">
+        <h3>Filtered Paid</h3>
+        <p id="filteredPaid">$0.00</p>
+    </div>
+
+    <div class="card">
+        <h3>Filtered Outstanding</h3>
+        <p id="filteredOutstanding">$0.00</p>
+    </div>
+
+</div>
 <div style="margin-bottom: 15px;">
 
     <label>Search Loads</label>
@@ -884,60 +912,40 @@ function displayLoadList(list) {
 function filterLoads() {
 
     const searchValue =
-        document.getElementById(
-            "searchInput"
-        ).value
+        document.getElementById("searchInput")
+        .value
         .toLowerCase()
         .trim();
 
-
     const driverValue =
-        document.getElementById(
-            "driverFilter"
-        ).value;
-
+        document.getElementById("driverFilter").value;
 
     const loadStatusValue =
-        document.getElementById(
-            "loadStatusFilter"
-        ).value;
-
+        document.getElementById("loadStatusFilter").value;
 
     const invoiceValue =
-        document.getElementById(
-            "invoiceFilter"
-        ).value;
-
+        document.getElementById("invoiceFilter").value;
 
     const paymentValue =
-        document.getElementById(
-            "paymentFilter"
-        ).value;
+        document.getElementById("paymentFilter").value;
 
 
     const filtered =
         loads.filter(load => {
 
-
             const searchableText = (
 
                 load.loadNumber + " " +
-
                 load.customer + " " +
-
                 load.driver + " " +
-
                 load.pickup + " " +
-
                 load.delivery
 
             ).toLowerCase();
 
 
             const matchesSearch =
-                searchableText.includes(
-                    searchValue
-                );
+                searchableText.includes(searchValue);
 
 
             const matchesDriver =
@@ -947,34 +955,25 @@ function filterLoads() {
 
             const matchesLoadStatus =
                 loadStatusValue === "" ||
-                load.loadStatus ===
-                    loadStatusValue;
+                load.loadStatus === loadStatusValue;
 
 
             const matchesInvoice =
                 invoiceValue === "" ||
-                load.invoiceStatus ===
-                    invoiceValue;
+                load.invoiceStatus === invoiceValue;
 
 
             const matchesPayment =
                 paymentValue === "" ||
-                load.paymentStatus ===
-                    paymentValue;
+                load.paymentStatus === paymentValue;
 
 
             return (
-
                 matchesSearch &&
-
                 matchesDriver &&
-
                 matchesLoadStatus &&
-
                 matchesInvoice &&
-
                 matchesPayment
-
             );
 
         });
@@ -982,8 +981,89 @@ function filterLoads() {
 
     displayLoadList(filtered);
 
+    updateFilteredSummary(filtered);
+
 }
 
+
+/* =========================
+   FILTERED SUMMARY
+========================= */
+
+function updateFilteredSummary(filteredLoads) {
+
+    const totalLoads =
+        filteredLoads.length;
+
+
+    const revenue =
+        filteredLoads.reduce(
+            (total, load) =>
+                total + load.rate,
+            0
+        );
+
+
+    const invoiced =
+        filteredLoads
+            .filter(
+                load =>
+                    load.invoiceStatus === "Invoiced"
+            )
+            .reduce(
+                (total, load) =>
+                    total + load.rate,
+                0
+            );
+
+
+    const paid =
+        filteredLoads
+            .filter(
+                load =>
+                    load.paymentStatus === "Paid"
+            )
+            .reduce(
+                (total, load) =>
+                    total + load.rate,
+                0
+            );
+
+
+    const outstanding =
+        revenue - paid;
+
+
+    document.getElementById(
+        "filteredLoads"
+    ).textContent =
+        totalLoads;
+
+
+    document.getElementById(
+        "filteredRevenue"
+    ).textContent =
+        "$" + revenue.toFixed(2);
+
+
+    document.getElementById(
+        "filteredInvoiced"
+    ).textContent =
+        "$" + invoiced.toFixed(2);
+
+
+    document.getElementById(
+        "filteredPaid"
+    ).textContent =
+        "$" + paid.toFixed(2);
+
+
+    document.getElementById(
+        "filteredOutstanding"
+    ).textContent =
+        "$" + outstanding.toFixed(2);
+
+}
 
 /* =========================
    DELETE LOAD
