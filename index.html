@@ -756,6 +756,7 @@ const supabaseClient = supabase.createClient(
 );
 
 let loads = [];
+let drivers = [];
 
 
 /* =========================
@@ -1058,7 +1059,7 @@ async function loadDrivers() {
         alert("Driver error: " + error.message);
         return;
     }
-
+   drivers = data || [];
     driverSelect.innerHTML =
         '<option value="">Select Driver</option>';
 
@@ -1076,6 +1077,7 @@ async function loadDrivers() {
     });
 
     console.log("Drivers added to dropdown!");
+    displayDriverList(drivers);
 }
 
 /* =========================
@@ -2116,6 +2118,94 @@ async function addDriver() {
 
     loadDrivers();
 }
+function displayDriverList(driversList) {
+
+    const table =
+        document.getElementById("driverTable");
+
+    if (!table) {
+        return;
+    }
+
+    table.innerHTML = "";
+
+    driversList.forEach(driver => {
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${driver.name}</td>
+
+            <td>
+                <button
+                    onclick="editDriver(${driver.id})"
+                    style="background:#f59e0b;"
+                >
+                    Edit
+                </button>
+            </td>
+        `;
+
+        table.appendChild(row);
+
+    });
+}
+async function editDriver(id) {
+
+    const driver =
+        drivers.find(
+            item => item.id === id
+        );
+
+    if (!driver) {
+        alert("Driver not found.");
+        return;
+    }
+
+    const newName =
+        prompt(
+            "Enter the new driver name:",
+            driver.name
+        );
+
+    if (newName === null) {
+        return;
+    }
+
+    const trimmedName =
+        newName.trim();
+
+    if (!trimmedName) {
+        alert("Driver name cannot be empty.");
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("drivers")
+            .update({
+                name: trimmedName
+            })
+            .eq("id", id);
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error updating driver: " +
+            error.message
+        );
+
+        return;
+    }
+
+    alert("Driver updated successfully!");
+
+    await loadDrivers();
+}
+    
 </script>
 
 </body>
