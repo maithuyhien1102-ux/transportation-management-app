@@ -2153,7 +2153,67 @@ function displayDriverList(driversList) {
 }
 async function editDriver(id) {
 
-     alert("EDIT BUTTON WORKED! Driver ID = " + id);
+    const driver = drivers.find(
+        item => item.id === id
+    );
+
+    if (!driver) {
+        alert("Driver not found.");
+        return;
+    }
+
+    const newName = prompt(
+        "Enter the new driver name:",
+        driver.name
+    );
+
+    if (newName === null) {
+        return;
+    }
+
+    const trimmedName = newName.trim();
+
+    if (!trimmedName) {
+        alert("Driver name cannot be empty.");
+        return;
+    }
+
+    console.log("Updating driver:", id, trimmedName);
+
+    const { data, error } =
+        await supabaseClient
+            .from("drivers")
+            .update({
+                name: trimmedName
+            })
+            .eq("id", id)
+            .select();
+
+    console.log("Update result:", data);
+    console.log("Update error:", error);
+
+    if (error) {
+
+        alert(
+            "Error updating driver: " +
+            error.message
+        );
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        alert(
+            "No driver was updated."
+        );
+
+        return;
+    }
+
+    alert("Driver updated successfully!");
+
+    await loadDrivers();
 }
 </script>
 
