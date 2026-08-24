@@ -480,6 +480,7 @@ th {
 <script>
 
 const SUPABASE_URL = "https://fftrldhzkjzsncadralg.supabase.co";
+
 const SUPABASE_KEY = "sb_publishable_fKb9oZEUdEQQCyrOGTRLSg__AKxRNT9";
 
 const supabaseClient = supabase.createClient(
@@ -490,81 +491,74 @@ const supabaseClient = supabase.createClient(
 let loads = [];
 
 
-/* ADD LOAD */
+/* =========================
+   ADD LOAD
+========================= */
 
 async function addLoad() {
 
-    const dateValue = document.getElementById("loadDate").value;
+    const dateValue =
+        document.getElementById("loadDate").value;
 
     if (!dateValue) {
         alert("Please select a date.");
         return;
     }
 
-    const dateObject = new Date(dateValue + "T00:00:00");
-
-    const dayOfWeek = dateObject.toLocaleDateString(
-        "en-US",
-        { weekday: "long" }
-    );
-
     const load = {
 
-        loadNumber: document.getElementById("loadNumber").value,
+        loadNumber:
+            document.getElementById("loadNumber").value.trim(),
 
         date: dateValue,
 
-        day: dayOfWeek,
+        day:
+            new Date(dateValue + "T00:00:00")
+            .toLocaleDateString(
+                "en-US",
+                { weekday: "long" }
+            ),
 
-        customer: document.getElementById("customer").value,
+        customer:
+            document.getElementById("customer").value.trim(),
 
-        driver: document.getElementById("driver").value,
+        driver:
+            document.getElementById("driver").value.trim(),
 
-        pickup: document.getElementById("pickup").value,
+        pickup:
+            document.getElementById("pickup").value.trim(),
 
-        delivery: document.getElementById("delivery").value,
+        delivery:
+            document.getElementById("delivery").value.trim(),
 
-        rate: Number(document.getElementById("rate").value),
+        rate:
+            Number(document.getElementById("rate").value),
 
-        loadStatus: document.getElementById("loadStatus").value,
+        loadStatus:
+            document.getElementById("loadStatus").value,
 
-        invoiceStatus: document.getElementById("invoiceStatus").value,
+        invoiceStatus:
+            document.getElementById("invoiceStatus").value,
 
-        paymentStatus: document.getElementById("paymentStatus").value
-
+        paymentStatus:
+            document.getElementById("paymentStatus").value
     };
 
 
-    /* SAVE TO SUPABASE */
-
     const { data, error } = await supabaseClient
-
         .from("loads")
-
         .insert([{
-
             load_number: load.loadNumber,
-
             load_date: load.date,
-
             customer: load.customer,
-
             driver: load.driver,
-
             pickup: load.pickup,
-
             delivery: load.delivery,
-
             rate: load.rate,
-
             load_status: load.loadStatus,
-
             invoice_status: load.invoiceStatus,
-
             payment_status: load.paymentStatus
-
         }])
-
         .select();
 
 
@@ -572,24 +566,24 @@ async function addLoad() {
 
         console.error(error);
 
-        alert("Error saving load: " + error.message);
+        alert(
+            "Error saving load: " +
+            error.message
+        );
 
         return;
-
     }
 
 
-    /* ADD THE NEW LOAD TO THE PAGE */
-
     loads.push({
-
         id: data[0].id,
-
         ...load
-
     });
-    updateDriverFilter();
 
+
+    clearForm();
+
+    updateDriverFilter();
 
     displayLoads();
 
@@ -598,9 +592,14 @@ async function addLoad() {
     updateDailySummary();
 
     updateWeeklySummary();
+}
 
 
-    /* CLEAR FORM */
+/* =========================
+   CLEAR FORM
+========================= */
+
+function clearForm() {
 
     document.getElementById("loadNumber").value = "";
 
@@ -615,31 +614,34 @@ async function addLoad() {
     document.getElementById("delivery").value = "";
 
     document.getElementById("rate").value = "";
-
 }
 
 
-/* LOAD DATA FROM SUPABASE */
+/* =========================
+   LOAD DATA FROM SUPABASE
+========================= */
 
 async function loadData() {
 
     const { data, error } = await supabaseClient
-
         .from("loads")
-
         .select("*")
-
         .order("load_date", { ascending: true });
 
 
     if (error) {
 
-        console.error("Error loading data:", error);
+        console.error(
+            "Error loading data:",
+            error
+        );
 
-        alert("Could not load data: " + error.message);
+        alert(
+            "Could not load data: " +
+            error.message
+        );
 
         return;
-
     }
 
 
@@ -647,234 +649,365 @@ async function loadData() {
 
         id: row.id,
 
-        loadNumber: row.load_number,
+        loadNumber: row.load_number || "",
 
-        date: row.load_date,
+        date: row.load_date || "",
 
-        day: new Date(
-            row.load_date + "T00:00:00"
-        ).toLocaleDateString(
-            "en-US",
-            { weekday: "long" }
-        ),
+        day:
+            row.load_date
+                ? new Date(
+                    row.load_date +
+                    "T00:00:00"
+                ).toLocaleDateString(
+                    "en-US",
+                    { weekday: "long" }
+                )
+                : "",
 
-        customer: row.customer,
+        customer: row.customer || "",
 
-        driver: row.driver,
+        driver: row.driver || "",
 
-        pickup: row.pickup,
+        pickup: row.pickup || "",
 
-        delivery: row.delivery,
+        delivery: row.delivery || "",
 
-        rate: Number(row.rate),
+        rate: Number(row.rate || 0),
 
-        loadStatus: row.load_status,
+        loadStatus:
+            row.load_status || "Pending",
 
-        invoiceStatus: row.invoice_status,
+        invoiceStatus:
+            row.invoice_status || "Not Invoiced",
 
-        paymentStatus: row.payment_status
+        paymentStatus:
+            row.payment_status || "Unpaid"
 
     }));
 
-updateDriverFilter();
-       displayLoads();
+
+    updateDriverFilter();
+
+    displayLoads();
 
     updateDashboard();
 
     updateDailySummary();
 
     updateWeeklySummary();
-
 }
 
 
-/* UPDATE DRIVER FILTER */
+/* =========================
+   DRIVER FILTER
+========================= */
 
 function updateDriverFilter() {
 
-    const driverFilter = document.getElementById("driverFilter");
+    const driverFilter =
+        document.getElementById(
+            "driverFilter"
+        );
 
     if (!driverFilter) {
-        console.error("Driver filter not found.");
         return;
     }
 
-    const drivers = [...new Set(
-        loads
-            .map(load => String(load.driver || "").trim())
-            .filter(driver => driver !== "")
-    )].sort();
 
-    console.log("Drivers found:", drivers);
+    const drivers = [
+        ...new Set(
+            loads
+                .map(load =>
+                    String(
+                        load.driver || ""
+                    ).trim()
+                )
+                .filter(driver =>
+                    driver !== ""
+                )
+        )
+    ].sort();
 
-    driverFilter.innerHTML = "";
 
-    const allOption = document.createElement("option");
+    const currentValue =
+        driverFilter.value;
 
-    allOption.value = "";
 
-    allOption.textContent = "All Drivers";
+    driverFilter.innerHTML =
+        '<option value="">All Drivers</option>';
 
-    driverFilter.appendChild(allOption);
 
     drivers.forEach(driver => {
 
-        const option = document.createElement("option");
+        const option =
+            document.createElement(
+                "option"
+            );
 
         option.value = driver;
 
         option.textContent = driver;
 
-        driverFilter.appendChild(option);
+        driverFilter.appendChild(
+            option
+        );
 
     });
 
+
+    if (
+        drivers.includes(
+            currentValue
+        )
+    ) {
+
+        driverFilter.value =
+            currentValue;
+
+    }
+
 }
 
-/* DISPLAY LOADS */
+
+/* =========================
+   DISPLAY LOADS
+========================= */
 
 function displayLoads() {
 
-    const table = document.getElementById("loadTable");
+    displayLoadList(loads);
+
+}
+
+
+/* =========================
+   DISPLAY LOAD LIST
+========================= */
+
+function displayLoadList(list) {
+
+    const table =
+        document.getElementById(
+            "loadTable"
+        );
 
     table.innerHTML = "";
 
-    loads.forEach(load => {
 
-        const row = `
-        <tr>
+    list.forEach(load => {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
 
             <td>${load.loadNumber}</td>
-            <td>${load.date}</td>
-            <td>${load.day}</td>
-            <td>${load.customer}</td>
-            <td>${load.driver}</td>
-            <td>${load.pickup}</td>
-            <td>${load.delivery}</td>
-            <td>$${load.rate.toFixed(2)}</td>
 
-            <td>${load.loadStatus}</td>
+            <td>${load.date}</td>
+
+            <td>${load.day}</td>
+
+            <td>${load.customer}</td>
+
+            <td>${load.driver}</td>
+
+            <td>${load.pickup}</td>
+
+            <td>${load.delivery}</td>
+
+            <td>
+                $${load.rate.toFixed(2)}
+            </td>
+
+            <td>
+                ${load.loadStatus}
+            </td>
 
             <td class="${
                 load.invoiceStatus === "Invoiced"
-                ? "status-invoiced"
-                : "status-not"
+                    ? "status-invoiced"
+                    : "status-not"
             }">
+
                 ${load.invoiceStatus}
+
             </td>
 
             <td class="${
                 load.paymentStatus === "Paid"
-                ? "status-paid"
-                : "status-unpaid"
+                    ? "status-paid"
+                    : "status-unpaid"
             }">
+
                 ${load.paymentStatus}
+
             </td>
 
             <td>
 
                 <button
                     onclick="editLoad(${load.id})"
-                    style="background:#f59e0b; margin-bottom:5px;"
+                    style="
+                        background:#f59e0b;
+                        margin-bottom:5px;
+                    "
                 >
                     Edit
                 </button>
 
                 <button
                     onclick="deleteLoad(${load.id})"
-                    style="background:#dc2626;"
+                    style="
+                        background:#dc2626;
+                    "
                 >
                     Delete
                 </button>
 
             </td>
 
-        </tr>
         `;
 
-        table.innerHTML += row;
+
+        table.appendChild(row);
 
     });
 
 }
-function displayFilteredLoads(filteredLoads) {
 
-    const table = document.getElementById("loadTable");
 
-    table.innerHTML = "";
+/* =========================
+   SEARCH + FILTER
+========================= */
 
-    filteredLoads.forEach(load => {
+function filterLoads() {
 
-        const row = `
-        <tr>
+    const searchValue =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
 
-            <td>${load.loadNumber}</td>
-            <td>${load.date}</td>
-            <td>${load.day}</td>
-            <td>${load.customer}</td>
-            <td>${load.driver}</td>
-            <td>${load.pickup}</td>
-            <td>${load.delivery}</td>
-            <td>$${load.rate.toFixed(2)}</td>
 
-            <td>${load.loadStatus}</td>
+    const driverValue =
+        document.getElementById(
+            "driverFilter"
+        ).value;
 
-            <td class="${
-                load.invoiceStatus === "Invoiced"
-                ? "status-invoiced"
-                : "status-not"
-            }">
-                ${load.invoiceStatus}
-            </td>
 
-            <td class="${
-                load.paymentStatus === "Paid"
-                ? "status-paid"
-                : "status-unpaid"
-            }">
-                ${load.paymentStatus}
-            </td>
+    const loadStatusValue =
+        document.getElementById(
+            "loadStatusFilter"
+        ).value;
 
-            <td>
 
-                <button
-                    onclick="editLoad(${load.id})"
-                    style="background:#f59e0b; margin-bottom:5px;"
-                >
-                    Edit
-                </button>
+    const invoiceValue =
+        document.getElementById(
+            "invoiceFilter"
+        ).value;
 
-                <button
-                    onclick="deleteLoad(${load.id})"
-                    style="background:#dc2626;"
-                >
-                    Delete
-                </button>
 
-            </td>
+    const paymentValue =
+        document.getElementById(
+            "paymentFilter"
+        ).value;
 
-        </tr>
-        `;
 
-        table.innerHTML += row;
+    const filtered =
+        loads.filter(load => {
 
-    });
+
+            const searchableText = (
+
+                load.loadNumber + " " +
+
+                load.customer + " " +
+
+                load.driver + " " +
+
+                load.pickup + " " +
+
+                load.delivery
+
+            ).toLowerCase();
+
+
+            const matchesSearch =
+                searchableText.includes(
+                    searchValue
+                );
+
+
+            const matchesDriver =
+                driverValue === "" ||
+                load.driver === driverValue;
+
+
+            const matchesLoadStatus =
+                loadStatusValue === "" ||
+                load.loadStatus ===
+                    loadStatusValue;
+
+
+            const matchesInvoice =
+                invoiceValue === "" ||
+                load.invoiceStatus ===
+                    invoiceValue;
+
+
+            const matchesPayment =
+                paymentValue === "" ||
+                load.paymentStatus ===
+                    paymentValue;
+
+
+            return (
+
+                matchesSearch &&
+
+                matchesDriver &&
+
+                matchesLoadStatus &&
+
+                matchesInvoice &&
+
+                matchesPayment
+
+            );
+
+        });
+
+
+    displayLoadList(filtered);
 
 }
+
+
+/* =========================
+   DELETE LOAD
+========================= */
+
 async function deleteLoad(id) {
 
-    const confirmed = confirm(
-        "Are you sure you want to delete this load?"
-    );
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this load?"
+        );
+
 
     if (!confirmed) {
         return;
     }
 
-    const { error } = await supabaseClient
-        .from("loads")
-        .delete()
-        .eq("id", id);
+
+    const { error } =
+        await supabaseClient
+            .from("loads")
+            .delete()
+            .eq("id", id);
+
 
     if (error) {
 
@@ -888,11 +1021,16 @@ async function deleteLoad(id) {
         return;
     }
 
-    loads = loads.filter(
-        load => load.id !== id
-    );
 
-    displayLoads();
+    loads =
+        loads.filter(
+            load => load.id !== id
+        );
+
+
+    updateDriverFilter();
+
+    filterLoads();
 
     updateDashboard();
 
@@ -901,51 +1039,78 @@ async function deleteLoad(id) {
     updateWeeklySummary();
 
 }
+
+
+/* =========================
+   EDIT LOAD
+========================= */
+
 async function editLoad(id) {
 
-    const load = loads.find(
-        item => item.id === id
-    );
+    const load =
+        loads.find(
+            item => item.id === id
+        );
+
 
     if (!load) {
         return;
     }
 
-    const newRate = prompt(
-        "Enter the new rate:",
-        load.rate
-    );
+
+    const newRate =
+        prompt(
+            "Enter the new rate:",
+            load.rate
+        );
+
 
     if (newRate === null) {
         return;
     }
 
-    const newInvoiceStatus = prompt(
-        "Enter Invoice Status (Invoiced / Not Invoiced):",
-        load.invoiceStatus
-    );
+
+    const newInvoiceStatus =
+        prompt(
+            "Enter Invoice Status (Invoiced / Not Invoiced):",
+            load.invoiceStatus
+        );
+
 
     if (newInvoiceStatus === null) {
         return;
     }
 
-    const newPaymentStatus = prompt(
-        "Enter Payment Status (Paid / Unpaid):",
-        load.paymentStatus
-    );
+
+    const newPaymentStatus =
+        prompt(
+            "Enter Payment Status (Paid / Unpaid):",
+            load.paymentStatus
+        );
+
 
     if (newPaymentStatus === null) {
         return;
     }
 
-    const { error } = await supabaseClient
-        .from("loads")
-        .update({
-            rate: Number(newRate),
-            invoice_status: newInvoiceStatus,
-            payment_status: newPaymentStatus
-        })
-        .eq("id", id);
+
+    const { error } =
+        await supabaseClient
+            .from("loads")
+            .update({
+
+                rate:
+                    Number(newRate),
+
+                invoice_status:
+                    newInvoiceStatus,
+
+                payment_status:
+                    newPaymentStatus
+
+            })
+            .eq("id", id);
+
 
     if (error) {
 
@@ -959,13 +1124,18 @@ async function editLoad(id) {
         return;
     }
 
-    load.rate = Number(newRate);
 
-    load.invoiceStatus = newInvoiceStatus;
+    load.rate =
+        Number(newRate);
 
-    load.paymentStatus = newPaymentStatus;
+    load.invoiceStatus =
+        newInvoiceStatus;
 
-    displayLoads();
+    load.paymentStatus =
+        newPaymentStatus;
+
+
+    filterLoads();
 
     updateDashboard();
 
@@ -976,350 +1146,356 @@ async function editLoad(id) {
 }
 
 
-/* DASHBOARD */
+/* =========================
+   DASHBOARD
+========================= */
 
 function updateDashboard() {
 
-document.getElementById("totalLoads")
-.textContent = loads.length;
+    document.getElementById(
+        "totalLoads"
+    ).textContent =
+        loads.length;
 
 
-const revenue =
-loads.reduce(
-(total, load) =>
-total + load.rate,
-0
-);
-
-document.getElementById("totalRevenue")
-.textContent =
-"$" + revenue.toFixed(2);
+    const revenue =
+        loads.reduce(
+            (total, load) =>
+                total + load.rate,
+            0
+        );
 
 
-const invoiced =
-loads
-.filter(load =>
-load.invoiceStatus === "Invoiced"
-)
-.reduce(
-(total, load) =>
-total + load.rate,
-0
-);
-
-document.getElementById("totalInvoiced")
-.textContent =
-"$" + invoiced.toFixed(2);
+    document.getElementById(
+        "totalRevenue"
+    ).textContent =
+        "$" + revenue.toFixed(2);
 
 
-const paid =
-loads
-.filter(load =>
-load.paymentStatus === "Paid"
-)
-.reduce(
-(total, load) =>
-total + load.rate,
-0
-);
-
-document.getElementById("totalPaid")
-.textContent =
-"$" + paid.toFixed(2);
+    const invoiced =
+        loads
+            .filter(
+                load =>
+                    load.invoiceStatus ===
+                    "Invoiced"
+            )
+            .reduce(
+                (total, load) =>
+                    total + load.rate,
+                0
+            );
 
 
-document.getElementById("outstanding")
-.textContent =
-"$" + (revenue - paid).toFixed(2);
+    document.getElementById(
+        "totalInvoiced"
+    ).textContent =
+        "$" + invoiced.toFixed(2);
+
+
+    const paid =
+        loads
+            .filter(
+                load =>
+                    load.paymentStatus ===
+                    "Paid"
+            )
+            .reduce(
+                (total, load) =>
+                    total + load.rate,
+                0
+            );
+
+
+    document.getElementById(
+        "totalPaid"
+    ).textContent =
+        "$" + paid.toFixed(2);
+
+
+    document.getElementById(
+        "outstanding"
+    ).textContent =
+        "$" +
+        (
+            revenue - paid
+        ).toFixed(2);
 
 }
 
 
-/* DAILY SUMMARY */
+/* =========================
+   DAILY SUMMARY
+========================= */
 
 function updateDailySummary() {
 
-const summary = {};
+    const summary = {};
 
-loads.forEach(load => {
 
-const key = load.date;
+    loads.forEach(load => {
 
-if (!summary[key]) {
+        const key =
+            load.date;
 
-summary[key] = {
 
-day: load.day,
+        if (!summary[key]) {
 
-loads: 0,
+            summary[key] = {
 
-revenue: 0,
+                day:
+                    load.day,
 
-invoiced: 0,
+                loads: 0,
 
-paid: 0
+                revenue: 0,
 
-};
+                invoiced: 0,
 
-}
+                paid: 0
 
-summary[key].loads++;
+            };
 
-summary[key].revenue += load.rate;
+        }
 
-if (load.invoiceStatus === "Invoiced") {
 
-summary[key].invoiced += load.rate;
+        summary[key].loads++;
 
-}
+        summary[key].revenue +=
+            load.rate;
 
-if (load.paymentStatus === "Paid") {
 
-summary[key].paid += load.rate;
+        if (
+            load.invoiceStatus ===
+            "Invoiced"
+        ) {
 
-}
+            summary[key].invoiced +=
+                load.rate;
 
-});
+        }
 
 
-const table =
-document.getElementById("dailySummary");
+        if (
+            load.paymentStatus ===
+            "Paid"
+        ) {
 
-table.innerHTML = "";
+            summary[key].paid +=
+                load.rate;
 
-Object.keys(summary)
-.sort()
-.forEach(date => {
-
-const item = summary[date];
-
-table.innerHTML += `
-
-<tr>
-
-<td>${item.day} (${date})</td>
-
-<td>${item.loads}</td>
-
-<td>$${item.revenue.toFixed(2)}</td>
-
-<td>$${item.invoiced.toFixed(2)}</td>
-
-<td>$${item.paid.toFixed(2)}</td>
-
-</tr>
-
-`;
-
-});
-
-}
-
-
-/* GET WEEK */
-
-function getWeekStart(dateString) {
-
-const date =
-new Date(dateString + "T00:00:00");
-
-const day = date.getDay();
-
-const difference =
-day === 0 ? -6 : 1 - day;
-
-date.setDate(
-date.getDate() + difference
-);
-
-return date
-.toISOString()
-.split("T")[0];
-
-}
-
-
-/* WEEKLY SUMMARY */
-
-function updateWeeklySummary() {
-
-const summary = {};
-
-loads.forEach(load => {
-
-const week =
-getWeekStart(load.date);
-
-if (!summary[week]) {
-
-summary[week] = {
-
-loads: 0,
-
-revenue: 0,
-
-invoiced: 0,
-
-paid: 0
-
-};
-
-}
-
-summary[week].loads++;
-
-summary[week].revenue += load.rate;
-
-if (
-load.invoiceStatus === "Invoiced"
-) {
-
-summary[week].invoiced += load.rate;
-
-}
-
-if (
-load.paymentStatus === "Paid"
-) {
-
-summary[week].paid += load.rate;
-
-}
-
-});
-
-
-const table =
-document.getElementById("weeklySummary");
-
-table.innerHTML = "";
-
-Object.keys(summary)
-.sort()
-.forEach(week => {
-
-const item = summary[week];
-
-table.innerHTML += `
-
-<tr>
-
-<td>Week starting ${week}</td>
-
-<td>${item.loads}</td>
-
-<td>$${item.revenue.toFixed(2)}</td>
-
-<td>$${item.invoiced.toFixed(2)}</td>
-
-<td>$${item.paid.toFixed(2)}</td>
-
-</tr>
-
-`;
-
-});
-
-}
-function filterLoads() {
-
-    const searchValue =
-        document.getElementById("searchInput")
-        .value
-        .toLowerCase()
-        .trim();
-
-
-    const driverValue =
-        document.getElementById("driverFilter").value;
-
-
-    const loadStatusValue =
-        document.getElementById("loadStatusFilter").value;
-
-
-    const invoiceValue =
-        document.getElementById("invoiceFilter").value;
-
-
-    const paymentValue =
-        document.getElementById("paymentFilter").value;
-
-
-    const filteredLoads = loads.filter(load => {
-
-
-        /* SEARCH */
-
-        const matchesSearch =
-
-            load.loadNumber.toLowerCase().includes(searchValue) ||
-
-            load.customer.toLowerCase().includes(searchValue) ||
-
-            load.driver.toLowerCase().includes(searchValue) ||
-
-            load.pickup.toLowerCase().includes(searchValue) ||
-
-            load.delivery.toLowerCase().includes(searchValue);
-
-
-        /* DRIVER */
-
-        const matchesDriver =
-
-            driverValue === "" ||
-
-            load.driver === driverValue;
-
-
-        /* LOAD STATUS */
-
-        const matchesLoadStatus =
-
-            loadStatusValue === "" ||
-
-            load.loadStatus === loadStatusValue;
-
-
-        /* INVOICE STATUS */
-
-        const matchesInvoice =
-
-            invoiceValue === "" ||
-
-            load.invoiceStatus === invoiceValue;
-
-
-        /* PAYMENT STATUS */
-
-        const matchesPayment =
-
-            paymentValue === "" ||
-
-            load.paymentStatus === paymentValue;
-
-
-        return (
-
-            matchesSearch &&
-
-            matchesDriver &&
-
-            matchesLoadStatus &&
-
-            matchesInvoice &&
-
-            matchesPayment
-
-        );
+        }
 
     });
 
 
-    displayFilteredLoads(filteredLoads);
+    const table =
+        document.getElementById(
+            "dailySummary"
+        );
+
+
+    table.innerHTML = "";
+
+
+    Object.keys(summary)
+        .sort()
+        .forEach(date => {
+
+            const item =
+                summary[date];
+
+
+            table.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        ${item.day}
+                        (${date})
+                    </td>
+
+                    <td>
+                        ${item.loads}
+                    </td>
+
+                    <td>
+                        $${item.revenue.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.invoiced.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.paid.toFixed(2)}
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
 
 }
+
+
+/* =========================
+   WEEK START
+========================= */
+
+function getWeekStart(dateString) {
+
+    const date =
+        new Date(
+            dateString +
+            "T00:00:00"
+        );
+
+
+    const day =
+        date.getDay();
+
+
+    const difference =
+        day === 0
+            ? -6
+            : 1 - day;
+
+
+    date.setDate(
+        date.getDate() +
+        difference
+    );
+
+
+    return date
+        .toISOString()
+        .split("T")[0];
+
+}
+
+
+/* =========================
+   WEEKLY SUMMARY
+========================= */
+
+function updateWeeklySummary() {
+
+    const summary = {};
+
+
+    loads.forEach(load => {
+
+        const week =
+            getWeekStart(
+                load.date
+            );
+
+
+        if (!summary[week]) {
+
+            summary[week] = {
+
+                loads: 0,
+
+                revenue: 0,
+
+                invoiced: 0,
+
+                paid: 0
+
+            };
+
+        }
+
+
+        summary[week].loads++;
+
+        summary[week].revenue +=
+            load.rate;
+
+
+        if (
+            load.invoiceStatus ===
+            "Invoiced"
+        ) {
+
+            summary[week].invoiced +=
+                load.rate;
+
+        }
+
+
+        if (
+            load.paymentStatus ===
+            "Paid"
+        ) {
+
+            summary[week].paid +=
+                load.rate;
+
+        }
+
+    });
+
+
+    const table =
+        document.getElementById(
+            "weeklySummary"
+        );
+
+
+    table.innerHTML = "";
+
+
+    Object.keys(summary)
+        .sort()
+        .forEach(week => {
+
+            const item =
+                summary[week];
+
+
+            table.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        Week starting
+                        ${week}
+                    </td>
+
+                    <td>
+                        ${item.loads}
+                    </td>
+
+                    <td>
+                        $${item.revenue.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.invoiced.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.paid.toFixed(2)}
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+}
+
+
+/* =========================
+   START APP
+========================= */
+
+loadData();
+
 </script>
 
 </body>
