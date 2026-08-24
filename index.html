@@ -987,32 +987,26 @@ function updateDriverFilter() {
 }
 async function loadDrivers() {
 
+    console.log("Starting loadDrivers...");
+
     const driverSelect =
         document.getElementById("driver");
 
     if (!driverSelect) {
+        console.error("Driver dropdown not found!");
         return;
     }
 
     const { data, error } =
         await supabaseClient
             .from("drivers")
-            .select("name")
-            .eq("active", true)
-            .order("name");
+            .select("*");
+
+    console.log("Driver data:", data);
+    console.log("Driver error:", error);
 
     if (error) {
-
-        console.error(
-            "Error loading drivers:",
-            error
-        );
-
-        alert(
-            "Could not load drivers: " +
-            error.message
-        );
-
+        alert("Driver error: " + error.message);
         return;
     }
 
@@ -1031,6 +1025,8 @@ async function loadDrivers() {
         driverSelect.appendChild(option);
 
     });
+
+    console.log("Drivers added to dropdown!");
 }
 
 /* =========================
