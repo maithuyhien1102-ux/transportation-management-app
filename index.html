@@ -223,8 +223,11 @@ th {
 </div>
 
 <div>
-<label>Driver</label>
-<input type="text" id="driver">
+    <label>Driver</label>
+
+    <select id="driver">
+        <option value="">Select Driver</option>
+    </select>
 </div>
 
 <div>
@@ -982,7 +985,53 @@ function updateDriverFilter() {
     }
 
 }
+async function loadDrivers() {
 
+    const driverSelect =
+        document.getElementById("driver");
+
+    if (!driverSelect) {
+        return;
+    }
+
+    const { data, error } =
+        await supabaseClient
+            .from("drivers")
+            .select("name")
+            .eq("active", true)
+            .order("name");
+
+    if (error) {
+
+        console.error(
+            "Error loading drivers:",
+            error
+        );
+
+        alert(
+            "Could not load drivers: " +
+            error.message
+        );
+
+        return;
+    }
+
+    driverSelect.innerHTML =
+        '<option value="">Select Driver</option>';
+
+    data.forEach(driver => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = driver.name;
+
+        option.textContent = driver.name;
+
+        driverSelect.appendChild(option);
+
+    });
+}
 
 /* =========================
    DISPLAY LOADS
@@ -1976,6 +2025,7 @@ function updateWeeklySummary() {
 ========================= */
 
 loadData();
+loadDrivers();
 
 </script>
 
