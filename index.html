@@ -1594,177 +1594,171 @@ function closeEditModal() {
 }
 async function saveEditedLoad() {
 
-    const id =
-        Number(
-            document.getElementById("editModal")
-                .dataset.loadId
-        );
-
-
-    const load =
-        loads.find(
-            item => item.id === id
-        );
-
-
-    if (!load) {
-
-        alert("Load not found.");
-
-        return;
-
-    }
-
-
-    const newLoadNumber =
-        document.getElementById(
-            "editLoadNumber"
-        ).value.trim();
-
-
-    const newDate =
-        document.getElementById(
-            "editLoadDate"
-        ).value;
-
-
-    const newCustomer =
-        document.getElementById(
-            "editCustomer"
-        ).value.trim();
-
-
-    const newDriver =
-        document.getElementById(
-            "editDriver"
-        ).value.trim();
-
-
-    const newPickup =
-        document.getElementById(
-            "editPickup"
-        ).value.trim();
-
-
-    const newDelivery =
-        document.getElementById(
-            "editDelivery"
-        ).value.trim();
-
-
-    const newRate =
-        Number(
-            document.getElementById(
-                "editRate"
-            ).value
-        );
-    const newDriverPay =
-    Number(
-        document.getElementById(
-            "editDriverPay"
-        ).value
+    const id = Number(
+        document.getElementById("editModal").dataset.loadId
     );
 
+    const load = loads.find(item => item.id === id);
+
+    if (!load) {
+        alert("Load not found.");
+        return;
+    }
+
+    const newLoadNumber =
+        document.getElementById("editLoadNumber").value.trim();
+
+    const newDate =
+        document.getElementById("editLoadDate").value;
+
+    const newCustomer =
+        document.getElementById("editCustomer").value.trim();
+
+    const newDriver =
+        document.getElementById("editDriver").value.trim();
+
+    const newPickup =
+        document.getElementById("editPickup").value.trim();
+
+    const newDelivery =
+        document.getElementById("editDelivery").value.trim();
+
+    const newRate =
+        Number(document.getElementById("editRate").value);
+
+    const newDriverPay =
+        Number(document.getElementById("editDriverPay").value || 0);
 
     const newLoadStatus =
-        document.getElementById(
-            "editLoadStatus"
-        ).value;
-
+        document.getElementById("editLoadStatus").value;
 
     const newInvoiceStatus =
-        document.getElementById(
-            "editInvoiceStatus"
-        ).value;
-
+        document.getElementById("editInvoiceStatus").value;
 
     const newPaymentStatus =
-        document.getElementById(
-            "editPaymentStatus"
-        ).value;
+        document.getElementById("editPaymentStatus").value;
 
 
+    // Validation
     if (!newDate) {
-
         alert("Please select a date.");
-
         return;
-
     }
-
 
     if (isNaN(newRate)) {
-
         alert("Please enter a valid rate.");
-
         return;
-
     }
+
     if (isNaN(newDriverPay) || newDriverPay < 0) {
-
-    alert("Please enter a valid driver pay amount.");
-
-    return;
-}
+        alert("Please enter a valid driver pay amount.");
+        return;
+    }
 
 
+    console.log("Saving load ID:", id);
     console.log("NEW DRIVER PAY:", newDriverPay);
-        const { error } =
-        await supabaseClient
-            .from("loads")
-            .update({
 
-                load_number:
-                    newLoadNumber,
 
-                load_date:
-                    newDate,
+    // =========================
+    // SAVE TO SUPABASE
+    // =========================
 
-                customer:
-                    newCustomer,
+    const { data, error } = await supabaseClient
+        .from("loads")
+        .update({
+            load_number: newLoadNumber,
+            load_date: newDate,
+            customer: newCustomer,
+            driver: newDriver,
+            pickup: newPickup,
+            delivery: newDelivery,
+            rate: newRate,
+            driver_pay: newDriverPay,
+            load_status: newLoadStatus,
+            invoice_status: newInvoiceStatus,
+            payment_status: newPaymentStatus
+        })
+        .eq("id", id)
+        .select();
 
-                driver:
-                    newDriver,
 
-                pickup:
-                    newPickup,
-
-                delivery:
-                    newDelivery,
-
-                rate:
-                    newRate,
-
-               driver_pay:
-                    newDriverPay,
-
-               load_status:
-                    newLoadStatus,
-
-                invoice_status:
-                    newInvoiceStatus,
-
-                payment_status:
-                    newPaymentStatus
-
-            })
-            .eq("id", id);
+    console.log("SUPABASE UPDATED DATA:", data);
+    console.log("SUPABASE UPDATE ERROR:", error);
 
 
     if (error) {
-
-        console.error(error);
+        console.error("UPDATE FAILED:", error);
 
         alert(
-            "Error updating load: " +
+            "Error updating load:\n\n" +
             error.message
         );
 
         return;
-
     }
 
 
+    // Make sure Supabase actually returned the updated row
+    if (!data || data.length === 0) {
+
+        console.error(
+            "Supabase did not return an updated row."
+        );
+
+        alert(
+            "The load was NOT updated in Supabase.\n\n" +
+            "This usually means there is an RLS/permission issue or the ID does not match."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // UPDATE LOCAL DATA
+    // =========================
+
+    load.loadNumber = newLoadNumber;
+    load.date = newDate;
+
+    load.day =
+        new Date(newDate + "T00:00:00")
+            .toLocaleDateString(
+                "en-US",
+                { weekday: "long" }
+            );
+
+    load.customer = newCustomer;
+    load.driver = newDriver;
+    load.pickup = newPickup;
+    load.delivery = newDelivery;
+    load.rate = newRate;
+    load.driverPay = newDriverPay;
+    load.loadStatus = newLoadStatus;
+    load.invoiceStatus = newInvoiceStatus;
+    load.paymentStatus = newPaymentStatus;
+
+
+    // =========================
+    // REFRESH PAGE DATA
+    // =========================
+
+    closeEditModal();
+
+    updateDriverFilter();
+
+    filterLoads();
+
+    updateDashboard();
+
+    updateDailySummary();
+
+    updateWeeklySummary();
+
+
+    alert("Load updated successfully!");
+}
     // Update the local load
 
     load.loadNumber =
