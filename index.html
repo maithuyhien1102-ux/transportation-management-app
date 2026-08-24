@@ -248,6 +248,16 @@ th {
 <label>Rate</label>
 <input type="number" id="rate" step="0.01">
 </div>
+<div>
+    <label>Driver Pay</label>
+    <input
+        type="number"
+        id="driverPay"
+        step="0.01"
+        min="0"
+        placeholder="0.00"
+    >
+</div>
 
 <div>
 <label>Load Status</label>
@@ -820,6 +830,10 @@ async function addLoad() {
             Number(
                 document.getElementById("rate").value
             ),
+        driverPay:
+    Number(
+        document.getElementById("driverPay").value || 0
+    ),
 
         loadStatus:
             document.getElementById("loadStatus").value,
@@ -855,12 +869,14 @@ async function addLoad() {
                 delivery:
                     load.delivery,
 
-                rate:
-                    load.rate,
+               rate:
+    load.rate,
 
-                load_status:
-                    load.loadStatus,
+driver_pay:
+    load.driverPay,
 
+load_status:
+    load.loadStatus,
                 invoice_status:
                     load.invoiceStatus,
 
@@ -927,6 +943,7 @@ function clearForm() {
     document.getElementById("delivery").value = "";
 
     document.getElementById("rate").value = "";
+    document.getElementById("driverPay").value = "";
 }
 
 
