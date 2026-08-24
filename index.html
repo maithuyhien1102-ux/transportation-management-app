@@ -379,6 +379,67 @@ th {
     >
 
 </div>
+<div class="form-grid" style="margin-bottom: 15px;">
+
+    <div>
+        <label>Driver</label>
+
+        <select id="driverFilter" onchange="filterLoads()">
+            <option value="">All Drivers</option>
+        </select>
+    </div>
+
+
+    <div>
+        <label>Load Status</label>
+
+        <select id="loadStatusFilter" onchange="filterLoads()">
+
+            <option value="">All Statuses</option>
+
+            <option value="Pending">Pending</option>
+
+            <option value="Completed">Completed</option>
+
+            <option value="Cancelled">Cancelled</option>
+
+        </select>
+
+    </div>
+
+
+    <div>
+        <label>Invoice Status</label>
+
+        <select id="invoiceFilter" onchange="filterLoads()">
+
+            <option value="">All</option>
+
+            <option value="Invoiced">Invoiced</option>
+
+            <option value="Not Invoiced">Not Invoiced</option>
+
+        </select>
+
+    </div>
+
+
+    <div>
+        <label>Payment Status</label>
+
+        <select id="paymentFilter" onchange="filterLoads()">
+
+            <option value="">All</option>
+
+            <option value="Paid">Paid</option>
+
+            <option value="Unpaid">Unpaid</option>
+
+        </select>
+
+    </div>
+
+</div>
 
 <div class="summary-table">
 
@@ -614,8 +675,8 @@ async function loadData() {
 
     }));
 
-
-    displayLoads();
+updateDriverFilter();
+       displayLoads();
 
     updateDashboard();
 
@@ -626,11 +687,43 @@ async function loadData() {
 }
 
 
-/* LOAD DATA WHEN WEBSITE OPENS */
+/* UPDATE DRIVER FILTER */
 
-loadData();
+function updateDriverFilter() {
+
+    const driverFilter =
+        document.getElementById("driverFilter");
+
+    const currentValue =
+        driverFilter.value;
+
+    const drivers = [...new Set(
+
+        loads
+            .map(load => load.driver)
+            .filter(driver => driver)
+
+    )].sort();
+
+    driverFilter.innerHTML =
+        `<option value="">All Drivers</option>`;
+
+    drivers.forEach(driver => {
+
+        driverFilter.innerHTML += `
+            <option value="${driver}">
+                ${driver}
+            </option>
+        `;
+
+    });
+
+    driverFilter.value = currentValue;
+
+}
 
 
+/* DISPLAY LOADS */
 
 function displayLoads() {
 
@@ -1064,9 +1157,29 @@ function filterLoads() {
         .toLowerCase()
         .trim();
 
+
+    const driverValue =
+        document.getElementById("driverFilter").value;
+
+
+    const loadStatusValue =
+        document.getElementById("loadStatusFilter").value;
+
+
+    const invoiceValue =
+        document.getElementById("invoiceFilter").value;
+
+
+    const paymentValue =
+        document.getElementById("paymentFilter").value;
+
+
     const filteredLoads = loads.filter(load => {
 
-        return (
+
+        /* SEARCH */
+
+        const matchesSearch =
 
             load.loadNumber.toLowerCase().includes(searchValue) ||
 
@@ -1076,85 +1189,63 @@ function filterLoads() {
 
             load.pickup.toLowerCase().includes(searchValue) ||
 
-            load.delivery.toLowerCase().includes(searchValue)
+            load.delivery.toLowerCase().includes(searchValue);
+
+
+        /* DRIVER */
+
+        const matchesDriver =
+
+            driverValue === "" ||
+
+            load.driver === driverValue;
+
+
+        /* LOAD STATUS */
+
+        const matchesLoadStatus =
+
+            loadStatusValue === "" ||
+
+            load.loadStatus === loadStatusValue;
+
+
+        /* INVOICE STATUS */
+
+        const matchesInvoice =
+
+            invoiceValue === "" ||
+
+            load.invoiceStatus === invoiceValue;
+
+
+        /* PAYMENT STATUS */
+
+        const matchesPayment =
+
+            paymentValue === "" ||
+
+            load.paymentStatus === paymentValue;
+
+
+        return (
+
+            matchesSearch &&
+
+            matchesDriver &&
+
+            matchesLoadStatus &&
+
+            matchesInvoice &&
+
+            matchesPayment
 
         );
 
     });
 
+
     displayFilteredLoads(filteredLoads);
-    function displayFilteredLoads(filteredLoads) {
-
-    const table =
-        document.getElementById("loadTable");
-
-    table.innerHTML = "";
-
-    filteredLoads.forEach(load => {
-
-        const row = `
-        <tr>
-
-            <td>${load.loadNumber}</td>
-
-            <td>${load.date}</td>
-
-            <td>${load.day}</td>
-
-            <td>${load.customer}</td>
-
-            <td>${load.driver}</td>
-
-            <td>${load.pickup}</td>
-
-            <td>${load.delivery}</td>
-
-            <td>$${load.rate.toFixed(2)}</td>
-
-            <td>${load.loadStatus}</td>
-
-            <td class="${
-                load.invoiceStatus === "Invoiced"
-                ? "status-invoiced"
-                : "status-not"
-            }">
-                ${load.invoiceStatus}
-            </td>
-
-            <td class="${
-                load.paymentStatus === "Paid"
-                ? "status-paid"
-                : "status-unpaid"
-            }">
-                ${load.paymentStatus}
-            </td>
-
-            <td>
-
-                <button
-                    onclick="editLoad(${load.id})"
-                    style="background:#f59e0b; margin-bottom:5px;"
-                >
-                    Edit
-                </button>
-
-                <button
-                    onclick="deleteLoad(${load.id})"
-                    style="background:#dc2626;"
-                >
-                    Delete
-                </button>
-
-            </td>
-
-        </tr>
-        `;
-
-        table.innerHTML += row;
-
-    });
-
-}
 
 }
 </script>
