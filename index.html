@@ -586,6 +586,7 @@ th {
 <th>Pickup</th>
 <th>Delivery</th>
 <th>Rate</th>
+<th>Driver Pay</th>
 <th>Load Status</th>
 <th>Invoice</th>
 <th>Payment</th>
@@ -1003,6 +1004,7 @@ async function loadData() {
         delivery: row.delivery || "",
 
         rate: Number(row.rate || 0),
+        driverPay: Number(row.driver_pay || 0),
 
         loadStatus:
             row.load_status || "Pending",
@@ -1190,12 +1192,16 @@ function displayLoadList(list) {
             <td>${load.delivery}</td>
 
             <td>
-                $${load.rate.toFixed(2)}
-            </td>
+    $${load.rate.toFixed(2)}
+</td>
 
-            <td>
-                ${load.loadStatus}
-            </td>
+<td>
+    $${load.driverPay.toFixed(2)}
+</td>
+
+<td>
+    ${load.loadStatus}
+</td>
 
             <td class="${
                 load.invoiceStatus === "Invoiced"
