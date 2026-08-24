@@ -502,7 +502,7 @@ if (error) {
 }
 
 loads.push(load);
-
+addLoad()
 displayLoads();
 
 updateDashboard();
@@ -510,6 +510,62 @@ updateDashboard();
 updateDailySummary();
 
 updateWeeklySummary();
+async function loadData() {
+
+    const { data, error } = await supabaseClient
+        .from("loads")
+        .select("*")
+        .order("load_date", { ascending: true });
+
+    if (error) {
+        console.error("Error loading data:", error);
+        alert("Could not load data: " + error.message);
+        return;
+    }
+
+    loads = data.map(row => ({
+
+        id: row.id,
+
+        loadNumber: row.load_number,
+
+        date: row.load_date,
+
+        day: new Date(
+            row.load_date + "T00:00:00"
+        ).toLocaleDateString(
+            "en-US",
+            { weekday: "long" }
+        ),
+
+        customer: row.customer,
+
+        driver: row.driver,
+
+        pickup: row.pickup,
+
+        delivery: row.delivery,
+
+        rate: Number(row.rate),
+
+        loadStatus: row.load_status,
+
+        invoiceStatus: row.invoice_status,
+
+        paymentStatus: row.payment_status
+
+    }));
+
+    displayLoads();
+
+    updateDashboard();
+
+    updateDailySummary();
+
+    updateWeeklySummary();
+}
+  loadData();
+    
 
 }
 
