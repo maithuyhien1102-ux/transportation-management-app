@@ -588,6 +588,7 @@ async function addLoad() {
         ...load
 
     });
+    updateDriverFilter();
 
 
     displayLoads();
@@ -691,37 +692,44 @@ updateDriverFilter();
 
 function updateDriverFilter() {
 
-    const driverFilter =
-        document.getElementById("driverFilter");
+    const driverFilter = document.getElementById("driverFilter");
 
-    const currentValue =
-        driverFilter.value;
+    if (!driverFilter) {
+        console.error("Driver filter not found.");
+        return;
+    }
 
     const drivers = [...new Set(
-
         loads
-            .map(load => load.driver)
-            .filter(driver => driver)
-
+            .map(load => String(load.driver || "").trim())
+            .filter(driver => driver !== "")
     )].sort();
 
-    driverFilter.innerHTML =
-        `<option value="">All Drivers</option>`;
+    console.log("Drivers found:", drivers);
+
+    driverFilter.innerHTML = "";
+
+    const allOption = document.createElement("option");
+
+    allOption.value = "";
+
+    allOption.textContent = "All Drivers";
+
+    driverFilter.appendChild(allOption);
 
     drivers.forEach(driver => {
 
-        driverFilter.innerHTML += `
-            <option value="${driver}">
-                ${driver}
-            </option>
-        `;
+        const option = document.createElement("option");
+
+        option.value = driver;
+
+        option.textContent = driver;
+
+        driverFilter.appendChild(option);
 
     });
 
-    driverFilter.value = currentValue;
-
 }
-
 
 /* DISPLAY LOADS */
 
