@@ -1504,41 +1504,6 @@ async function deleteLoad(id) {
 
     alert("Load deleted successfully!");
 }
-console.log("UPDATED LOAD:", data);
-console.log("UPDATE ERROR:", error);
-
-
-    if (error) {
-
-        console.error(error);
-
-        alert(
-            "Error deleting load: " +
-            error.message
-        );
-
-        return;
-    }
-
-
-    loads =
-        loads.filter(
-            load => load.id !== id
-        );
-
-
-    updateDriverFilter();
-
-    filterLoads();
-
-    updateDashboard();
-
-    updateDailySummary();
-
-    updateWeeklySummary();
-
-}
-
 
 /* =========================
    EDIT LOAD
@@ -1776,70 +1741,7 @@ async function saveEditedLoad() {
 
     alert("Load updated successfully!");
 }
-    // Update the local load
-
-    load.loadNumber =
-        newLoadNumber;
-
-    load.date =
-        newDate;
-
-    load.day =
-        new Date(
-            newDate + "T00:00:00"
-        ).toLocaleDateString(
-            "en-US",
-            { weekday: "long" }
-        );
-
-    load.customer =
-        newCustomer;
-
-    load.driver =
-        newDriver;
-
-    load.pickup =
-        newPickup;
-
-    load.delivery =
-        newDelivery;
-
-    load.rate =
-        newRate;
-    load.driverPay =
-        newDriverPay;
-
-    load.loadStatus =
-        newLoadStatus;
-
-    load.invoiceStatus =
-        newInvoiceStatus;
-
-    load.paymentStatus =
-        newPaymentStatus;
-
-
-    // Close popup
-
-    closeEditModal();
-
-
-    // Refresh everything
-
-    updateDriverFilter();
-
-    filterLoads();
-
-    updateDashboard();
-
-    updateDailySummary();
-
-    updateWeeklySummary();
-
-
-    alert("Load updated successfully!");
-
-}
+   
 /* =========================
    DASHBOARD
 ========================= */
