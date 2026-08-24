@@ -1195,47 +1195,110 @@ async function deleteLoad(id) {
 
 async function editLoad(id) {
 
-    const load =
-        loads.find(
-            item => item.id === id
-        );
-
+    const load = loads.find(
+        item => item.id === id
+    );
 
     if (!load) {
+        alert("Load not found.");
         return;
     }
 
 
-    const newRate =
-        prompt(
-            "Enter the new rate:",
-            load.rate
-        );
+    const newLoadNumber = prompt(
+        "Load Number:",
+        load.loadNumber
+    );
 
+    if (newLoadNumber === null) {
+        return;
+    }
+
+
+    const newDate = prompt(
+        "Date (YYYY-MM-DD):",
+        load.date
+    );
+
+    if (newDate === null) {
+        return;
+    }
+
+
+    const newCustomer = prompt(
+        "Customer:",
+        load.customer
+    );
+
+    if (newCustomer === null) {
+        return;
+    }
+
+
+    const newDriver = prompt(
+        "Driver:",
+        load.driver
+    );
+
+    if (newDriver === null) {
+        return;
+    }
+
+
+    const newPickup = prompt(
+        "Pickup:",
+        load.pickup
+    );
+
+    if (newPickup === null) {
+        return;
+    }
+
+
+    const newDelivery = prompt(
+        "Delivery:",
+        load.delivery
+    );
+
+    if (newDelivery === null) {
+        return;
+    }
+
+
+    const newRate = prompt(
+        "Rate:",
+        load.rate
+    );
 
     if (newRate === null) {
         return;
     }
 
 
-    const newInvoiceStatus =
-        prompt(
-            "Enter Invoice Status (Invoiced / Not Invoiced):",
-            load.invoiceStatus
-        );
+    const newLoadStatus = prompt(
+        "Load Status (Pending / Completed / Cancelled):",
+        load.loadStatus
+    );
 
+    if (newLoadStatus === null) {
+        return;
+    }
+
+
+    const newInvoiceStatus = prompt(
+        "Invoice Status (Invoiced / Not Invoiced):",
+        load.invoiceStatus
+    );
 
     if (newInvoiceStatus === null) {
         return;
     }
 
 
-    const newPaymentStatus =
-        prompt(
-            "Enter Payment Status (Paid / Unpaid):",
-            load.paymentStatus
-        );
-
+    const newPaymentStatus = prompt(
+        "Payment Status (Paid / Unpaid):",
+        load.paymentStatus
+    );
 
     if (newPaymentStatus === null) {
         return;
@@ -1247,8 +1310,29 @@ async function editLoad(id) {
             .from("loads")
             .update({
 
+                load_number:
+                    newLoadNumber.trim(),
+
+                load_date:
+                    newDate,
+
+                customer:
+                    newCustomer.trim(),
+
+                driver:
+                    newDriver.trim(),
+
+                pickup:
+                    newPickup.trim(),
+
+                delivery:
+                    newDelivery.trim(),
+
                 rate:
                     Number(newRate),
+
+                load_status:
+                    newLoadStatus,
 
                 invoice_status:
                     newInvoiceStatus,
@@ -1273,8 +1357,37 @@ async function editLoad(id) {
     }
 
 
+    load.loadNumber =
+        newLoadNumber.trim();
+
+    load.date =
+        newDate;
+
+    load.day =
+        new Date(
+            newDate + "T00:00:00"
+        ).toLocaleDateString(
+            "en-US",
+            { weekday: "long" }
+        );
+
+    load.customer =
+        newCustomer.trim();
+
+    load.driver =
+        newDriver.trim();
+
+    load.pickup =
+        newPickup.trim();
+
+    load.delivery =
+        newDelivery.trim();
+
     load.rate =
         Number(newRate);
+
+    load.loadStatus =
+        newLoadStatus;
 
     load.invoiceStatus =
         newInvoiceStatus;
@@ -1282,6 +1395,8 @@ async function editLoad(id) {
     load.paymentStatus =
         newPaymentStatus;
 
+
+    updateDriverFilter();
 
     filterLoads();
 
@@ -1291,9 +1406,9 @@ async function editLoad(id) {
 
     updateWeeklySummary();
 
+    alert("Load updated successfully!");
+
 }
-
-
 /* =========================
    DASHBOARD
 ========================= */
