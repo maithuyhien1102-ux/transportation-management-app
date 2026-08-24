@@ -724,6 +724,79 @@ async function deleteLoad(id) {
     updateWeeklySummary();
 
 }
+async function editLoad(id) {
+
+    const load = loads.find(
+        item => item.id === id
+    );
+
+    if (!load) {
+        return;
+    }
+
+    const newRate = prompt(
+        "Enter the new rate:",
+        load.rate
+    );
+
+    if (newRate === null) {
+        return;
+    }
+
+    const newInvoiceStatus = prompt(
+        "Enter Invoice Status (Invoiced / Not Invoiced):",
+        load.invoiceStatus
+    );
+
+    if (newInvoiceStatus === null) {
+        return;
+    }
+
+    const newPaymentStatus = prompt(
+        "Enter Payment Status (Paid / Unpaid):",
+        load.paymentStatus
+    );
+
+    if (newPaymentStatus === null) {
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("loads")
+        .update({
+            rate: Number(newRate),
+            invoice_status: newInvoiceStatus,
+            payment_status: newPaymentStatus
+        })
+        .eq("id", id);
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error updating load: " +
+            error.message
+        );
+
+        return;
+    }
+
+    load.rate = Number(newRate);
+
+    load.invoiceStatus = newInvoiceStatus;
+
+    load.paymentStatus = newPaymentStatus;
+
+    displayLoads();
+
+    updateDashboard();
+
+    updateDailySummary();
+
+    updateWeeklySummary();
+
+}
 
 
 /* DASHBOARD */
