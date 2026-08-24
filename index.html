@@ -2048,7 +2048,51 @@ function updateWeeklySummary() {
 
 loadData();
 loadDrivers();
+async function addDriver() {
 
+    const driverName =
+        document.getElementById("newDriverName")
+        .value
+        .trim();
+
+    if (!driverName) {
+        alert("Please enter a driver name.");
+        return;
+    }
+
+    const { data, error } =
+        await supabaseClient
+            .from("drivers")
+            .insert([
+                {
+                    name: driverName
+                }
+            ])
+            .select();
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error adding driver: " +
+            error.message
+        );
+
+        return;
+    }
+
+    alert(
+        driverName +
+        " was added successfully!"
+    );
+
+    document.getElementById(
+        "newDriverName"
+    ).value = "";
+
+    loadDrivers();
+}
 </script>
 
 </body>
