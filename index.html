@@ -387,6 +387,7 @@ th {
 <th>Load Status</th>
 <th>Invoice</th>
 <th>Payment</th>
+<th>Actions</th>
 
 </tr>
 
@@ -621,62 +622,106 @@ loadData();
 
 function displayLoads() {
 
-const table =
-document.getElementById("loadTable");
+    const table = document.getElementById("loadTable");
 
-table.innerHTML = "";
+    table.innerHTML = "";
 
-loads.forEach(load => {
+    loads.forEach(load => {
 
-const row = `
+        const row = `
+        <tr>
 
-<tr>
+            <td>${load.loadNumber}</td>
+            <td>${load.date}</td>
+            <td>${load.day}</td>
+            <td>${load.customer}</td>
+            <td>${load.driver}</td>
+            <td>${load.pickup}</td>
+            <td>${load.delivery}</td>
+            <td>$${load.rate.toFixed(2)}</td>
 
-<td>${load.loadNumber}</td>
+            <td>${load.loadStatus}</td>
 
-<td>${load.date}</td>
+            <td class="${
+                load.invoiceStatus === "Invoiced"
+                ? "status-invoiced"
+                : "status-not"
+            }">
+                ${load.invoiceStatus}
+            </td>
 
-<td>${load.day}</td>
+            <td class="${
+                load.paymentStatus === "Paid"
+                ? "status-paid"
+                : "status-unpaid"
+            }">
+                ${load.paymentStatus}
+            </td>
 
-<td>${load.customer}</td>
+            <td>
 
-<td>${load.driver}</td>
+                <button
+                    onclick="editLoad(${load.id})"
+                    style="background:#f59e0b; margin-bottom:5px;"
+                >
+                    Edit
+                </button>
 
-<td>${load.pickup}</td>
+                <button
+                    onclick="deleteLoad(${load.id})"
+                    style="background:#dc2626;"
+                >
+                    Delete
+                </button>
 
-<td>${load.delivery}</td>
+            </td>
 
-<td>$${load.rate.toFixed(2)}</td>
+        </tr>
+        `;
 
-<td>${load.loadStatus}</td>
+        table.innerHTML += row;
 
-<td class="${
-load.invoiceStatus === "Invoiced"
-? "status-invoiced"
-: "status-not"
-}">
+    });
 
-${load.invoiceStatus}
+}
+async function deleteLoad(id) {
 
-</td>
+    const confirmed = confirm(
+        "Are you sure you want to delete this load?"
+    );
 
-<td class="${
-load.paymentStatus === "Paid"
-? "status-paid"
-: "status-unpaid"
-}">
+    if (!confirmed) {
+        return;
+    }
 
-${load.paymentStatus}
+    const { error } = await supabaseClient
+        .from("loads")
+        .delete()
+        .eq("id", id);
 
-</td>
+    if (error) {
 
-</tr>
+        console.error(error);
 
-`;
+        alert(
+            "Error deleting load: " +
+            error.message
+        );
 
-table.innerHTML += row;
+        return;
+    }
 
-});
+    loads = loads.filter(
+        load => load.id !== id
+    );
+
+    displayLoads();
+
+    updateDashboard();
+
+    updateDailySummary();
+
+    updateWeeklySummary();
 
 }
 
