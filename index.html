@@ -1563,6 +1563,7 @@ function editLoad(id) {
 
     document.getElementById("editRate").value =
         load.rate;
+   
     document.getElementById("editDriverPay").value =
         load.driverPay;
 
@@ -1710,7 +1711,8 @@ async function saveEditedLoad() {
 }
 
 
-    const { error } =
+    console.log("NEW DRIVER PAY:", newDriverPay);
+        const { error } =
         await supabaseClient
             .from("loads")
             .update({
