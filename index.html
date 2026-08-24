@@ -1478,11 +1478,27 @@ async function deleteLoad(id) {
     }
 
 
-    const { error } =
-        await supabaseClient
-            .from("loads")
-            .delete()
-            .eq("id", id);
+    const { data, error } =
+    await supabaseClient
+        .from("loads")
+        .update({
+            load_number: newLoadNumber,
+            load_date: newDate,
+            customer: newCustomer,
+            driver: newDriver,
+            pickup: newPickup,
+            delivery: newDelivery,
+            rate: newRate,
+            driver_pay: newDriverPay,
+            load_status: newLoadStatus,
+            invoice_status: newInvoiceStatus,
+            payment_status: newPaymentStatus
+        })
+        .eq("id", id)
+        .select();
+
+console.log("UPDATED LOAD:", data);
+console.log("UPDATE ERROR:", error);
 
 
     if (error) {
