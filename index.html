@@ -1,296 +1,793 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transportation Management</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f6f8;
-        }
+<title>Transportation Management</title>
 
-        header {
-            background: #1f2937;
-            color: white;
-            padding: 20px;
-        }
+<style>
 
-        header h1 {
-            margin: 0;
-        }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: #1f2937;
+}
 
-        .container {
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
-        }
+header {
+    background: #1f2937;
+    color: white;
+    padding: 25px;
+}
 
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+header h1 {
+    margin: 0;
+}
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 20px;
+}
 
-        .card h3 {
-            margin-top: 0;
-            color: #555;
-        }
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
 
-        .card p {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 0;
-        }
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
 
-        .form-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-        }
+.card h3 {
+    margin-top: 0;
+    font-size: 15px;
+    color: #6b7280;
+}
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-        }
+.card p {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
 
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
+.section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
 
-        button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
 
-        button:hover {
-            background: #1d4ed8;
-        }
+label {
+    font-size: 13px;
+    font-weight: bold;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
-        th {
-            background: #e5e7eb;
-        }
+button:hover {
+    background: #1d4ed8;
+}
 
-        @media (max-width: 700px) {
-            table {
-                font-size: 12px;
-            }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
 
-            th, td {
-                padding: 8px;
-            }
-        }
-    </style>
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    background: #e5e7eb;
+}
+
+.status-paid {
+    color: green;
+    font-weight: bold;
+}
+
+.status-unpaid {
+    color: red;
+    font-weight: bold;
+}
+
+.status-invoiced {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+.status-not {
+    color: #6b7280;
+}
+
+.summary-table {
+    overflow-x: auto;
+}
+
+@media (max-width: 700px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 7px;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
 <header>
-    <h1>Transportation Management</h1>
-    <p>Load & Invoice Tracking System</p>
+
+<h1>Transportation Management</h1>
+
+<p>Load, Invoice & Payment Tracking</p>
+
 </header>
 
 <div class="container">
 
-    <div class="dashboard">
+<!-- DASHBOARD -->
 
-        <div class="card">
-            <h3>Total Loads</h3>
-            <p id="totalLoads">0</p>
-        </div>
+<div class="dashboard">
 
-        <div class="card">
-            <h3>Completed</h3>
-            <p id="completedLoads">0</p>
-        </div>
+<div class="card">
+<h3>Total Loads</h3>
+<p id="totalLoads">0</p>
+</div>
 
-        <div class="card">
-            <h3>Pending</h3>
-            <p id="pendingLoads">0</p>
-        </div>
+<div class="card">
+<h3>Total Revenue</h3>
+<p id="totalRevenue">$0.00</p>
+</div>
 
-        <div class="card">
-            <h3>Total Revenue</h3>
-            <p id="totalRevenue">$0</p>
-        </div>
+<div class="card">
+<h3>Total Invoiced</h3>
+<p id="totalInvoiced">$0.00</p>
+</div>
 
-    </div>
+<div class="card">
+<h3>Total Paid</h3>
+<p id="totalPaid">$0.00</p>
+</div>
 
-    <div class="form-section">
-
-        <h2>Add Load</h2>
-
-        <div class="form-grid">
-
-            <input type="text" id="loadNumber" placeholder="Load Number">
-
-            <input type="date" id="loadDate">
-
-            <input type="text" id="customer" placeholder="Customer">
-
-            <input type="text" id="driver" placeholder="Driver">
-
-            <input type="text" id="pickup" placeholder="Pickup">
-
-            <input type="text" id="delivery" placeholder="Delivery">
-
-            <input type="number" id="rate" placeholder="Rate">
-
-            <select id="status">
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-            </select>
-
-            <button onclick="addLoad()">Add Load</button>
-
-        </div>
-
-    </div>
-
-    <h2>Loads</h2>
-
-    <table>
-
-        <thead>
-            <tr>
-                <th>Load #</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Driver</th>
-                <th>Pickup</th>
-                <th>Delivery</th>
-                <th>Rate</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-
-        <tbody id="loadTable"></tbody>
-
-    </table>
+<div class="card">
+<h3>Outstanding</h3>
+<p id="outstanding">$0.00</p>
+</div>
 
 </div>
+
+
+<!-- ADD LOAD -->
+
+<div class="section">
+
+<h2>Add Load</h2>
+
+<div class="form-grid">
+
+<div>
+<label>Load Number</label>
+<input type="text" id="loadNumber">
+</div>
+
+<div>
+<label>Date</label>
+<input type="date" id="loadDate">
+</div>
+
+<div>
+<label>Customer</label>
+<input type="text" id="customer">
+</div>
+
+<div>
+<label>Driver</label>
+<input type="text" id="driver">
+</div>
+
+<div>
+<label>Pickup</label>
+<input type="text" id="pickup">
+</div>
+
+<div>
+<label>Delivery</label>
+<input type="text" id="delivery">
+</div>
+
+<div>
+<label>Rate</label>
+<input type="number" id="rate" step="0.01">
+</div>
+
+<div>
+<label>Load Status</label>
+
+<select id="loadStatus">
+
+<option value="Pending">Pending</option>
+
+<option value="Completed">Completed</option>
+
+<option value="Cancelled">Cancelled</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Invoice Status</label>
+
+<select id="invoiceStatus">
+
+<option value="Not Invoiced">Not Invoiced</option>
+
+<option value="Invoiced">Invoiced</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Payment Status</label>
+
+<select id="paymentStatus">
+
+<option value="Unpaid">Unpaid</option>
+
+<option value="Paid">Paid</option>
+
+</select>
+
+</div>
+
+<div>
+
+<button onclick="addLoad()">Add Load</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- DAILY SUMMARY -->
+
+<div class="section">
+
+<h2>Daily Summary</h2>
+
+<div class="summary-table">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Day</th>
+<th>Loads</th>
+<th>Revenue</th>
+<th>Invoiced</th>
+<th>Paid</th>
+
+</tr>
+
+</thead>
+
+<tbody id="dailySummary"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- WEEKLY SUMMARY -->
+
+<div class="section">
+
+<h2>Weekly Summary</h2>
+
+<div class="summary-table">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Week</th>
+<th>Loads</th>
+<th>Revenue</th>
+<th>Invoiced</th>
+<th>Paid</th>
+
+</tr>
+
+</thead>
+
+<tbody id="weeklySummary"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- LOAD TABLE -->
+
+<div class="section">
+
+<h2>Load Records</h2>
+
+<div class="summary-table">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Load #</th>
+<th>Date</th>
+<th>Day</th>
+<th>Customer</th>
+<th>Driver</th>
+<th>Pickup</th>
+<th>Delivery</th>
+<th>Rate</th>
+<th>Load Status</th>
+<th>Invoice</th>
+<th>Payment</th>
+
+</tr>
+
+</thead>
+
+<tbody id="loadTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
 
 <script>
 
 let loads = [];
 
+
+/* ADD LOAD */
+
 function addLoad() {
 
-    const load = {
+const dateValue =
+document.getElementById("loadDate").value;
 
-        loadNumber: document.getElementById("loadNumber").value,
+if (!dateValue) {
 
-        date: document.getElementById("loadDate").value,
+alert("Please select a date.");
 
-        customer: document.getElementById("customer").value,
-
-        driver: document.getElementById("driver").value,
-
-        pickup: document.getElementById("pickup").value,
-
-        delivery: document.getElementById("delivery").value,
-
-        rate: Number(document.getElementById("rate").value),
-
-        status: document.getElementById("status").value
-
-    };
-
-    loads.push(load);
-
-    displayLoads();
-
-    updateDashboard();
+return;
 
 }
+
+const dateObject =
+new Date(dateValue + "T00:00:00");
+
+const dayOfWeek =
+dateObject.toLocaleDateString(
+"en-US",
+{ weekday: "long" }
+);
+
+const load = {
+
+loadNumber:
+document.getElementById("loadNumber").value,
+
+date: dateValue,
+
+day: dayOfWeek,
+
+customer:
+document.getElementById("customer").value,
+
+driver:
+document.getElementById("driver").value,
+
+pickup:
+document.getElementById("pickup").value,
+
+delivery:
+document.getElementById("delivery").value,
+
+rate:
+Number(document.getElementById("rate").value),
+
+loadStatus:
+document.getElementById("loadStatus").value,
+
+invoiceStatus:
+document.getElementById("invoiceStatus").value,
+
+paymentStatus:
+document.getElementById("paymentStatus").value
+
+};
+
+
+loads.push(load);
+
+displayLoads();
+
+updateDashboard();
+
+updateDailySummary();
+
+updateWeeklySummary();
+
+}
+
+
+/* DISPLAY LOADS */
 
 function displayLoads() {
 
-    const table = document.getElementById("loadTable");
+const table =
+document.getElementById("loadTable");
 
-    table.innerHTML = "";
+table.innerHTML = "";
 
-    loads.forEach(load => {
+loads.forEach(load => {
 
-        const row = `
+const row = `
 
-            <tr>
+<tr>
 
-                <td>${load.loadNumber}</td>
+<td>${load.loadNumber}</td>
 
-                <td>${load.date}</td>
+<td>${load.date}</td>
 
-                <td>${load.customer}</td>
+<td>${load.day}</td>
 
-                <td>${load.driver}</td>
+<td>${load.customer}</td>
 
-                <td>${load.pickup}</td>
+<td>${load.driver}</td>
 
-                <td>${load.delivery}</td>
+<td>${load.pickup}</td>
 
-                <td>$${load.rate.toFixed(2)}</td>
+<td>${load.delivery}</td>
 
-                <td>${load.status}</td>
+<td>$${load.rate.toFixed(2)}</td>
 
-            </tr>
+<td>${load.loadStatus}</td>
 
-        `;
+<td class="${
+load.invoiceStatus === "Invoiced"
+? "status-invoiced"
+: "status-not"
+}">
 
-        table.innerHTML += row;
+${load.invoiceStatus}
 
-    });
+</td>
+
+<td class="${
+load.paymentStatus === "Paid"
+? "status-paid"
+: "status-unpaid"
+}">
+
+${load.paymentStatus}
+
+</td>
+
+</tr>
+
+`;
+
+table.innerHTML += row;
+
+});
 
 }
 
+
+/* DASHBOARD */
+
 function updateDashboard() {
 
-    document.getElementById("totalLoads").textContent = loads.length;
+document.getElementById("totalLoads")
+.textContent = loads.length;
 
-    const completed = loads.filter(
-        load => load.status === "Completed"
-    ).length;
 
-    document.getElementById("completedLoads").textContent = completed;
+const revenue =
+loads.reduce(
+(total, load) =>
+total + load.rate,
+0
+);
 
-    document.getElementById("pendingLoads").textContent =
-        loads.length - completed;
+document.getElementById("totalRevenue")
+.textContent =
+"$" + revenue.toFixed(2);
 
-    const revenue = loads.reduce(
-        (total, load) => total + load.rate,
-        0
-    );
 
-    document.getElementById("totalRevenue").textContent =
-        "$" + revenue.toFixed(2);
+const invoiced =
+loads
+.filter(load =>
+load.invoiceStatus === "Invoiced"
+)
+.reduce(
+(total, load) =>
+total + load.rate,
+0
+);
+
+document.getElementById("totalInvoiced")
+.textContent =
+"$" + invoiced.toFixed(2);
+
+
+const paid =
+loads
+.filter(load =>
+load.paymentStatus === "Paid"
+)
+.reduce(
+(total, load) =>
+total + load.rate,
+0
+);
+
+document.getElementById("totalPaid")
+.textContent =
+"$" + paid.toFixed(2);
+
+
+document.getElementById("outstanding")
+.textContent =
+"$" + (revenue - paid).toFixed(2);
+
+}
+
+
+/* DAILY SUMMARY */
+
+function updateDailySummary() {
+
+const summary = {};
+
+loads.forEach(load => {
+
+const key = load.date;
+
+if (!summary[key]) {
+
+summary[key] = {
+
+day: load.day,
+
+loads: 0,
+
+revenue: 0,
+
+invoiced: 0,
+
+paid: 0
+
+};
+
+}
+
+summary[key].loads++;
+
+summary[key].revenue += load.rate;
+
+if (load.invoiceStatus === "Invoiced") {
+
+summary[key].invoiced += load.rate;
+
+}
+
+if (load.paymentStatus === "Paid") {
+
+summary[key].paid += load.rate;
+
+}
+
+});
+
+
+const table =
+document.getElementById("dailySummary");
+
+table.innerHTML = "";
+
+Object.keys(summary)
+.sort()
+.forEach(date => {
+
+const item = summary[date];
+
+table.innerHTML += `
+
+<tr>
+
+<td>${item.day} (${date})</td>
+
+<td>${item.loads}</td>
+
+<td>$${item.revenue.toFixed(2)}</td>
+
+<td>$${item.invoiced.toFixed(2)}</td>
+
+<td>$${item.paid.toFixed(2)}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+
+/* GET WEEK */
+
+function getWeekStart(dateString) {
+
+const date =
+new Date(dateString + "T00:00:00");
+
+const day = date.getDay();
+
+const difference =
+day === 0 ? -6 : 1 - day;
+
+date.setDate(
+date.getDate() + difference
+);
+
+return date
+.toISOString()
+.split("T")[0];
+
+}
+
+
+/* WEEKLY SUMMARY */
+
+function updateWeeklySummary() {
+
+const summary = {};
+
+loads.forEach(load => {
+
+const week =
+getWeekStart(load.date);
+
+if (!summary[week]) {
+
+summary[week] = {
+
+loads: 0,
+
+revenue: 0,
+
+invoiced: 0,
+
+paid: 0
+
+};
+
+}
+
+summary[week].loads++;
+
+summary[week].revenue += load.rate;
+
+if (
+load.invoiceStatus === "Invoiced"
+) {
+
+summary[week].invoiced += load.rate;
+
+}
+
+if (
+load.paymentStatus === "Paid"
+) {
+
+summary[week].paid += load.rate;
+
+}
+
+});
+
+
+const table =
+document.getElementById("weeklySummary");
+
+table.innerHTML = "";
+
+Object.keys(summary)
+.sort()
+.forEach(week => {
+
+const item = summary[week];
+
+table.innerHTML += `
+
+<tr>
+
+<td>Week starting ${week}</td>
+
+<td>${item.loads}</td>
+
+<td>$${item.revenue.toFixed(2)}</td>
+
+<td>$${item.invoiced.toFixed(2)}</td>
+
+<td>$${item.paid.toFixed(2)}</td>
+
+</tr>
+
+`;
+
+});
 
 }
 
