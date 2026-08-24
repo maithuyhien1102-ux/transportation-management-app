@@ -257,16 +257,6 @@ th {
         placeholder="0.00"
     >
 </div>
-<div>
-    <label>Driver Pay</label>
-    <input
-        type="number"
-        id="editDriverPay"
-        step="0.01"
-        min="0"
-        placeholder="0.00"
-    >
-</div>
 </div>
 <div>
     <label>Driver Pay</label>
@@ -1565,7 +1555,7 @@ function editLoad(id) {
         load.rate;
    
     document.getElementById("editDriverPay").value =
-        load.driverPay;
+        load.driverPay || 0;
 
     document.getElementById("editLoadStatus").value =
         load.loadStatus;
@@ -1736,13 +1726,13 @@ async function saveEditedLoad() {
                     newDelivery,
 
                 rate:
-    newRate,
+                    newRate,
 
-driver_pay:
-    newDriverPay,
+               driver_pay:
+                    newDriverPay,
 
-load_status:
-    newLoadStatus,
+               load_status:
+                    newLoadStatus,
 
                 invoice_status:
                     newInvoiceStatus,
