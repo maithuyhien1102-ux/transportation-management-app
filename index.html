@@ -2153,41 +2153,37 @@ function displayDriverList(driversList) {
 }
 async function editDriver(id) {
 
-    const driver =
-        drivers.find(
-            item => item.id === id
-        );
+    const driver = drivers.find(
+        item => item.id === id
+    );
 
     if (!driver) {
         alert("Driver not found.");
         return;
     }
 
-    const newName =
-        prompt(
-            "Enter the new driver name:",
-            driver.name
-        );
+    const newName = prompt(
+        "Enter the new driver name:",
+        driver.name
+    );
 
     if (newName === null) {
         return;
     }
 
-    const trimmedName =
-        newName.trim();
+    const trimmedName = newName.trim();
 
     if (!trimmedName) {
         alert("Driver name cannot be empty.");
         return;
     }
 
-    const { error } =
-        await supabaseClient
-            .from("drivers")
-            .update({
-                name: trimmedName
-            })
-            .eq("id", id);
+    const { error } = await supabaseClient
+        .from("drivers")
+        .update({
+            name: trimmedName
+        })
+        .eq("id", id);
 
     if (error) {
 
@@ -2201,9 +2197,16 @@ async function editDriver(id) {
         return;
     }
 
-    alert("Driver updated successfully!");
+    // Update the local driver list
+    driver.name = trimmedName;
 
-    await loadDrivers();
+    // Refresh the Driver List
+    displayDriverList(drivers);
+
+    // Refresh the Add Load dropdown
+    loadDrivers();
+
+    alert("Driver updated successfully!");
 }
     
 </script>
