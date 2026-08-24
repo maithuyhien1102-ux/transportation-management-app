@@ -410,6 +410,29 @@ th {
 <div class="form-grid" style="margin-bottom: 15px;">
 
     <div>
+        <label>From Date</label>
+
+        <input
+            type="date"
+            id="startDate"
+            onchange="filterLoads()"
+        >
+    </div>
+
+    <div>
+        <label>To Date</label>
+
+        <input
+            type="date"
+            id="endDate"
+            onchange="filterLoads()"
+        >
+    </div>
+
+</div>
+<div class="form-grid" style="margin-bottom: 15px;">
+
+    <div>
         <label>Driver</label>
 
         <select id="driverFilter" onchange="filterLoads()">
@@ -916,6 +939,11 @@ function filterLoads() {
         .value
         .toLowerCase()
         .trim();
+    const startDate =
+        document.getElementById("startDate").value;
+
+    const endDate =
+        document.getElementById("endDate").value;
 
     const driverValue =
         document.getElementById("driverFilter").value;
@@ -946,6 +974,14 @@ function filterLoads() {
 
             const matchesSearch =
                 searchableText.includes(searchValue);
+            const matchesStartDate =
+                startDate === "" ||
+                load.date >= startDate;
+
+
+            const matchesEndDate =
+                endDate === "" ||
+                load.date <= endDate;
 
 
             const matchesDriver =
@@ -968,15 +1004,15 @@ function filterLoads() {
                 load.paymentStatus === paymentValue;
 
 
-            return (
-                matchesSearch &&
-                matchesDriver &&
-                matchesLoadStatus &&
-                matchesInvoice &&
-                matchesPayment
-            );
-
-        });
+           return (
+               matchesSearch &&
+               matchesStartDate &&
+               matchesEndDate &&
+               matchesDriver &&
+               matchesLoadStatus &&
+               matchesInvoice &&
+               matchesPayment
+);
 
 
     displayLoadList(filtered);
