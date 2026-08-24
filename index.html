@@ -771,16 +771,21 @@ async function addLoad() {
 
     const dateValue =
         document.getElementById("loadDate").value;
-    const driverValue =
-    document.getElementById("driver").value;
-console.log("Selected driver:", driverValue);
-if (!driverValue) {
-    alert("Please select a driver.");
-    return;
-}
 
+    const driverValue =
+        document.getElementById("driver").value;
+
+    console.log("Selected driver:", driverValue);
+
+    // Check date
     if (!dateValue) {
         alert("Please select a date.");
+        return;
+    }
+
+    // Check driver
+    if (!driverValue) {
+        alert("Please select a driver.");
         return;
     }
 
@@ -802,7 +807,7 @@ if (!driverValue) {
             document.getElementById("customer").value.trim(),
 
         driver:
-            document.getElementById("driver").value.trim(),
+            driverValue,
 
         pickup:
             document.getElementById("pickup").value.trim(),
@@ -811,7 +816,9 @@ if (!driverValue) {
             document.getElementById("delivery").value.trim(),
 
         rate:
-            Number(document.getElementById("rate").value),
+            Number(
+                document.getElementById("rate").value
+            ),
 
         loadStatus:
             document.getElementById("loadStatus").value,
@@ -824,21 +831,43 @@ if (!driverValue) {
     };
 
 
-    const { data, error } = await supabaseClient
-        .from("loads")
-        .insert([{
-            load_number: load.loadNumber,
-            load_date: load.date,
-            customer: load.customer,
-            driver: load.driver,
-            pickup: load.pickup,
-            delivery: load.delivery,
-            rate: load.rate,
-            load_status: load.loadStatus,
-            invoice_status: load.invoiceStatus,
-            payment_status: load.paymentStatus
-        }])
-        .select();
+    const { data, error } =
+        await supabaseClient
+            .from("loads")
+            .insert([{
+
+                load_number:
+                    load.loadNumber,
+
+                load_date:
+                    load.date,
+
+                customer:
+                    load.customer,
+
+                driver:
+                    load.driver,
+
+                pickup:
+                    load.pickup,
+
+                delivery:
+                    load.delivery,
+
+                rate:
+                    load.rate,
+
+                load_status:
+                    load.loadStatus,
+
+                invoice_status:
+                    load.invoiceStatus,
+
+                payment_status:
+                    load.paymentStatus
+
+            }])
+            .select();
 
 
     if (error) {
@@ -855,8 +884,11 @@ if (!driverValue) {
 
 
     loads.push({
+
         id: data[0].id,
+
         ...load
+
     });
 
 
@@ -871,6 +903,7 @@ if (!driverValue) {
     updateDailySummary();
 
     updateWeeklySummary();
+
 }
 
 
