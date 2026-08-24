@@ -2218,9 +2218,11 @@ async function editDriver(id) {
         return;
     }
 
+    const oldName = driver.name;
+
     const newName = prompt(
         "Enter the new driver name:",
-        driver.name
+        oldName
     );
 
     if (newName === null) {
@@ -2234,11 +2236,21 @@ async function editDriver(id) {
         return;
     }
 
+    if (trimmedName === oldName) {
+        return;
+    }
+
     console.log(
-        "Updating driver:",
-        id,
+        "Renaming driver:",
+        oldName,
+        "→",
         trimmedName
     );
+
+
+    // =========================
+    // UPDATE DRIVER NAME
+    // =========================
 
     const { data, error } =
         await supabaseClient
@@ -2249,17 +2261,10 @@ async function editDriver(id) {
             .eq("id", id)
             .select();
 
-    console.log(
-        "Update result:",
-        data
-    );
-
-    console.log(
-        "Update error:",
-        error
-    );
 
     if (error) {
+
+        console.error(error);
 
         alert(
             "Error updating driver: " +
@@ -2268,6 +2273,7 @@ async function editDriver(id) {
 
         return;
     }
+
 
     if (!data || data.length === 0) {
 
@@ -2278,11 +2284,71 @@ async function editDriver(id) {
         return;
     }
 
-    alert(
-        "Driver updated successfully!"
-    );
+
+    // =========================
+    // UPDATE EXISTING LOADS
+    // =========================
+
+    const { error: loadError } =
+        await supabaseClient
+            .from("loads")
+            .update({
+                driver: trimmedName
+            })
+            .eq("driver", oldName);
+
+
+    if (loadError) {
+
+        console.error(
+            "Error updating loads:",
+            loadError
+        );
+
+        alert(
+            "Driver was renamed, but existing loads could not be updated.\n\n" +
+            loadError.message
+        );
+
+        await loadDrivers();
+
+        return;
+    }
+
+
+    // =========================
+    // UPDATE LOCAL LOAD DATA
+    // =========================
+
+    loads.forEach(load => {
+
+        if (load.driver === oldName) {
+            load.driver = trimmedName;
+        }
+
+    });
+
+
+    // =========================
+    // REFRESH EVERYTHING
+    // =========================
 
     await loadDrivers();
+
+    updateDriverFilter();
+
+    filterLoads();
+
+    updateDashboard();
+
+    updateDailySummary();
+
+    updateWeeklySummary();
+
+
+    alert(
+        "Driver and existing loads updated successfully!"
+    );
 }
 </script>
 
