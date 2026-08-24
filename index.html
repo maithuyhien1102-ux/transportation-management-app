@@ -2178,7 +2178,11 @@ async function editDriver(id) {
         return;
     }
 
-    console.log("Updating driver:", id, trimmedName);
+    console.log(
+        "Updating driver:",
+        id,
+        trimmedName
+    );
 
     const { data, error } =
         await supabaseClient
@@ -2189,8 +2193,15 @@ async function editDriver(id) {
             .eq("id", id)
             .select();
 
-    console.log("Update result:", data);
-    console.log("Update error:", error);
+    console.log(
+        "Update result:",
+        data
+    );
+
+    console.log(
+        "Update error:",
+        error
+    );
 
     if (error) {
 
@@ -2211,7 +2222,9 @@ async function editDriver(id) {
         return;
     }
 
-    alert("Driver updated successfully!");
+    alert(
+        "Driver updated successfully!"
+    );
 
     await loadDrivers();
 }
