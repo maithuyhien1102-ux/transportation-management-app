@@ -420,108 +420,153 @@ let loads = [];
 
 async function addLoad() {
 
-const dateValue =
-document.getElementById("loadDate").value;
+    const dateValue = document.getElementById("loadDate").value;
 
-if (!dateValue) {
+    if (!dateValue) {
+        alert("Please select a date.");
+        return;
+    }
 
-alert("Please select a date.");
+    const dateObject = new Date(dateValue + "T00:00:00");
 
-return;
+    const dayOfWeek = dateObject.toLocaleDateString(
+        "en-US",
+        { weekday: "long" }
+    );
+
+    const load = {
+
+        loadNumber: document.getElementById("loadNumber").value,
+
+        date: dateValue,
+
+        day: dayOfWeek,
+
+        customer: document.getElementById("customer").value,
+
+        driver: document.getElementById("driver").value,
+
+        pickup: document.getElementById("pickup").value,
+
+        delivery: document.getElementById("delivery").value,
+
+        rate: Number(document.getElementById("rate").value),
+
+        loadStatus: document.getElementById("loadStatus").value,
+
+        invoiceStatus: document.getElementById("invoiceStatus").value,
+
+        paymentStatus: document.getElementById("paymentStatus").value
+
+    };
+
+
+    /* SAVE TO SUPABASE */
+
+    const { data, error } = await supabaseClient
+
+        .from("loads")
+
+        .insert([{
+
+            load_number: load.loadNumber,
+
+            load_date: load.date,
+
+            customer: load.customer,
+
+            driver: load.driver,
+
+            pickup: load.pickup,
+
+            delivery: load.delivery,
+
+            rate: load.rate,
+
+            load_status: load.loadStatus,
+
+            invoice_status: load.invoiceStatus,
+
+            payment_status: load.paymentStatus
+
+        }])
+
+        .select();
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert("Error saving load: " + error.message);
+
+        return;
+
+    }
+
+
+    /* ADD THE NEW LOAD TO THE PAGE */
+
+    loads.push({
+
+        id: data[0].id,
+
+        ...load
+
+    });
+
+
+    displayLoads();
+
+    updateDashboard();
+
+    updateDailySummary();
+
+    updateWeeklySummary();
+
+
+    /* CLEAR FORM */
+
+    document.getElementById("loadNumber").value = "";
+
+    document.getElementById("loadDate").value = "";
+
+    document.getElementById("customer").value = "";
+
+    document.getElementById("driver").value = "";
+
+    document.getElementById("pickup").value = "";
+
+    document.getElementById("delivery").value = "";
+
+    document.getElementById("rate").value = "";
 
 }
 
-const dateObject =
-new Date(dateValue + "T00:00:00");
 
-const dayOfWeek =
-dateObject.toLocaleDateString(
-"en-US",
-{ weekday: "long" }
-);
+/* LOAD DATA FROM SUPABASE */
 
-const load = {
-
-loadNumber:
-document.getElementById("loadNumber").value,
-
-date: dateValue,
-
-day: dayOfWeek,
-
-customer:
-document.getElementById("customer").value,
-
-driver:
-document.getElementById("driver").value,
-
-pickup:
-document.getElementById("pickup").value,
-
-delivery:
-document.getElementById("delivery").value,
-
-rate:
-Number(document.getElementById("rate").value),
-
-loadStatus:
-document.getElementById("loadStatus").value,
-
-invoiceStatus:
-document.getElementById("invoiceStatus").value,
-
-paymentStatus:
-document.getElementById("paymentStatus").value
-
-};
-
-
-const { data, error } = await supabaseClient
-    .from("loads")
-    .insert([{
-        load_number: load.loadNumber,
-        load_date: load.date,
-        customer: load.customer,
-        driver: load.driver,
-        pickup: load.pickup,
-        delivery: load.delivery,
-        rate: load.rate,
-        load_status: load.loadStatus,
-        invoice_status: load.invoiceStatus,
-        payment_status: load.paymentStatus
-    }])
-    .select();
-
-if (error) {
-
-    console.error(error);
-
-    alert("Error saving load: " + error.message);
-
-    return;
-}
-
-loads.push(load);
-addLoad()
-displayLoads();
-
-updateDashboard();
-
-updateDailySummary();
-
-updateWeeklySummary();
 async function loadData() {
 
     const { data, error } = await supabaseClient
+
         .from("loads")
+
         .select("*")
+
         .order("load_date", { ascending: true });
 
+
     if (error) {
+
         console.error("Error loading data:", error);
+
         alert("Could not load data: " + error.message);
+
         return;
+
     }
+
 
     loads = data.map(row => ({
 
@@ -556,6 +601,7 @@ async function loadData() {
 
     }));
 
+
     displayLoads();
 
     updateDashboard();
@@ -563,14 +609,15 @@ async function loadData() {
     updateDailySummary();
 
     updateWeeklySummary();
-}
-  loadData();
-    
 
 }
 
 
-/* DISPLAY LOADS */
+/* LOAD DATA WHEN WEBSITE OPENS */
+
+loadData();
+
+
 
 function displayLoads() {
 
