@@ -2153,9 +2153,13 @@ function displayDriverList(driversList) {
 }
 async function editDriver(id) {
 
+    console.log("Editing driver ID:", id);
+
     const driver = drivers.find(
         item => item.id === id
     );
+
+    console.log("Driver found:", driver);
 
     if (!driver) {
         alert("Driver not found.");
@@ -2178,12 +2182,18 @@ async function editDriver(id) {
         return;
     }
 
-    const { error } = await supabaseClient
+    console.log("New name:", trimmedName);
+
+    const { data, error } = await supabaseClient
         .from("drivers")
         .update({
             name: trimmedName
         })
-        .eq("id", id);
+        .eq("id", id)
+        .select();
+
+    console.log("Updated driver:", data);
+    console.log("Update error:", error);
 
     if (error) {
 
@@ -2197,18 +2207,26 @@ async function editDriver(id) {
         return;
     }
 
-    // Update the local driver list
-    driver.name = trimmedName;
+    if (!data || data.length === 0) {
 
-    // Refresh the Driver List
-    displayDriverList(drivers);
+        alert(
+            "The update did not change any driver record."
+        );
 
-    // Refresh the Add Load dropdown
-    loadDrivers();
+        console.log(
+            "No row was returned from the update."
+        );
 
-    alert("Driver updated successfully!");
+        return;
+    }
+
+    alert(
+        "Driver updated successfully!"
+    );
+
+    // Reload drivers from Supabase
+    await loadDrivers();
 }
-    
 </script>
 
 </body>
