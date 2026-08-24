@@ -1467,36 +1467,43 @@ function updateFilteredSummary(filteredLoads) {
 
 async function deleteLoad(id) {
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to delete this load?"
-        );
-
+    const confirmed = confirm(
+        "Are you sure you want to delete this load?"
+    );
 
     if (!confirmed) {
         return;
     }
 
-
-    const { data, error } =
-    await supabaseClient
+    const { error } = await supabaseClient
         .from("loads")
-        .update({
-            load_number: newLoadNumber,
-            load_date: newDate,
-            customer: newCustomer,
-            driver: newDriver,
-            pickup: newPickup,
-            delivery: newDelivery,
-            rate: newRate,
-            driver_pay: newDriverPay,
-            load_status: newLoadStatus,
-            invoice_status: newInvoiceStatus,
-            payment_status: newPaymentStatus
-        })
-        .eq("id", id)
-        .select();
+        .delete()
+        .eq("id", id);
 
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error deleting load: " +
+            error.message
+        );
+
+        return;
+    }
+
+    loads = loads.filter(
+        load => load.id !== id
+    );
+
+    updateDriverFilter();
+    filterLoads();
+    updateDashboard();
+    updateDailySummary();
+    updateWeeklySummary();
+
+    alert("Load deleted successfully!");
+}
 console.log("UPDATED LOAD:", data);
 console.log("UPDATE ERROR:", error);
 
