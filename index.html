@@ -771,6 +771,13 @@ async function addLoad() {
 
     const dateValue =
         document.getElementById("loadDate").value;
+    const driverValue =
+    document.getElementById("driver").value;
+
+if (!driverValue) {
+    alert("Please select a driver.");
+    return;
+}
 
     if (!dateValue) {
         alert("Please select a date.");
