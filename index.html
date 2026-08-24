@@ -797,6 +797,70 @@ function displayLoads() {
     });
 
 }
+function displayFilteredLoads(filteredLoads) {
+
+    const table = document.getElementById("loadTable");
+
+    table.innerHTML = "";
+
+    filteredLoads.forEach(load => {
+
+        const row = `
+        <tr>
+
+            <td>${load.loadNumber}</td>
+            <td>${load.date}</td>
+            <td>${load.day}</td>
+            <td>${load.customer}</td>
+            <td>${load.driver}</td>
+            <td>${load.pickup}</td>
+            <td>${load.delivery}</td>
+            <td>$${load.rate.toFixed(2)}</td>
+
+            <td>${load.loadStatus}</td>
+
+            <td class="${
+                load.invoiceStatus === "Invoiced"
+                ? "status-invoiced"
+                : "status-not"
+            }">
+                ${load.invoiceStatus}
+            </td>
+
+            <td class="${
+                load.paymentStatus === "Paid"
+                ? "status-paid"
+                : "status-unpaid"
+            }">
+                ${load.paymentStatus}
+            </td>
+
+            <td>
+
+                <button
+                    onclick="editLoad(${load.id})"
+                    style="background:#f59e0b; margin-bottom:5px;"
+                >
+                    Edit
+                </button>
+
+                <button
+                    onclick="deleteLoad(${load.id})"
+                    style="background:#dc2626;"
+                >
+                    Delete
+                </button>
+
+            </td>
+
+        </tr>
+        `;
+
+        table.innerHTML += row;
+
+    });
+
+}
 async function deleteLoad(id) {
 
     const confirmed = confirm(
