@@ -939,6 +939,7 @@ function filterLoads() {
         .value
         .toLowerCase()
         .trim();
+
     const startDate =
         document.getElementById("startDate").value;
 
@@ -958,61 +959,64 @@ function filterLoads() {
         document.getElementById("paymentFilter").value;
 
 
-    const filtered =
-        loads.filter(load => {
+    const filtered = loads.filter(load => {
 
-            const searchableText = (
+        const searchableText = (
 
-                load.loadNumber + " " +
-                load.customer + " " +
-                load.driver + " " +
-                load.pickup + " " +
-                load.delivery
+            load.loadNumber + " " +
+            load.customer + " " +
+            load.driver + " " +
+            load.pickup + " " +
+            load.delivery
 
-            ).toLowerCase();
-
-
-            const matchesSearch =
-                searchableText.includes(searchValue);
-            const matchesStartDate =
-                startDate === "" ||
-                load.date >= startDate;
+        ).toLowerCase();
 
 
-            const matchesEndDate =
-                endDate === "" ||
-                load.date <= endDate;
+        const matchesSearch =
+            searchableText.includes(searchValue);
 
 
-            const matchesDriver =
-                driverValue === "" ||
-                load.driver === driverValue;
+        const matchesStartDate =
+            startDate === "" ||
+            load.date >= startDate;
 
 
-            const matchesLoadStatus =
-                loadStatusValue === "" ||
-                load.loadStatus === loadStatusValue;
+        const matchesEndDate =
+            endDate === "" ||
+            load.date <= endDate;
 
 
-            const matchesInvoice =
-                invoiceValue === "" ||
-                load.invoiceStatus === invoiceValue;
+        const matchesDriver =
+            driverValue === "" ||
+            load.driver === driverValue;
 
 
-            const matchesPayment =
-                paymentValue === "" ||
-                load.paymentStatus === paymentValue;
+        const matchesLoadStatus =
+            loadStatusValue === "" ||
+            load.loadStatus === loadStatusValue;
 
 
-           return (
-               matchesSearch &&
-               matchesStartDate &&
-               matchesEndDate &&
-               matchesDriver &&
-               matchesLoadStatus &&
-               matchesInvoice &&
-               matchesPayment
-);
+        const matchesInvoice =
+            invoiceValue === "" ||
+            load.invoiceStatus === invoiceValue;
+
+
+        const matchesPayment =
+            paymentValue === "" ||
+            load.paymentStatus === paymentValue;
+
+
+        return (
+            matchesSearch &&
+            matchesStartDate &&
+            matchesEndDate &&
+            matchesDriver &&
+            matchesLoadStatus &&
+            matchesInvoice &&
+            matchesPayment
+        );
+
+    });
 
 
     displayLoadList(filtered);
@@ -1020,7 +1024,6 @@ function filterLoads() {
     updateFilteredSummary(filtered);
 
 }
-
 
 /* =========================
    FILTERED SUMMARY
