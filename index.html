@@ -339,6 +339,7 @@ th {
             <thead>
                 <tr>
                     <th>Driver</th>
+                    <th>Loads</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -2178,19 +2179,24 @@ function displayDriverList(driversList) {
         const row =
             document.createElement("tr");
 
-        row.innerHTML = `
-            <td>${driver.name}</td>
+        const loadCount = loads.filter(
+    load => load.driver === driver.name
+).length;
 
-            <td>
-                <button
-                    onclick="editDriver(${driver.id})"
-                    style="background:#f59e0b;"
-                >
-                    Edit
-                </button>
-            </td>
-        `;
+row.innerHTML = `
+    <td>${driver.name}</td>
 
+    <td>${loadCount}</td>
+
+    <td>
+        <button
+            onclick="editDriver(${driver.id})"
+            style="background:#f59e0b;"
+        >
+            Edit
+        </button>
+    </td>
+`;
         table.appendChild(row);
 
     });
