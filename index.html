@@ -430,6 +430,17 @@ th {
     </div>
 
 </div>
+<div style="margin-bottom: 15px;">
+
+    <button
+        type="button"
+        onclick="clearFilters()"
+        style="background:#6b7280;"
+    >
+        Clear Filters
+    </button>
+
+</div>
 <div class="form-grid" style="margin-bottom: 15px;">
 
     <div>
@@ -1024,7 +1035,25 @@ function filterLoads() {
     updateFilteredSummary(filtered);
 
 }
+function clearFilters() {
 
+    document.getElementById("searchInput").value = "";
+
+    document.getElementById("startDate").value = "";
+
+    document.getElementById("endDate").value = "";
+
+    document.getElementById("driverFilter").value = "";
+
+    document.getElementById("loadStatusFilter").value = "";
+
+    document.getElementById("invoiceFilter").value = "";
+
+    document.getElementById("paymentFilter").value = "";
+
+    filterLoads();
+
+}
 /* =========================
    FILTERED SUMMARY
 ========================= */
