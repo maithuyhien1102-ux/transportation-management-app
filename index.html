@@ -538,7 +538,160 @@ th {
 
 </div>
 
+<!-- EDIT LOAD MODAL -->
 
+<div
+    id="editModal"
+    style="
+        display:none;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.5);
+        z-index:1000;
+        overflow:auto;
+    "
+>
+
+    <div
+        style="
+            background:white;
+            width:90%;
+            max-width:800px;
+            margin:50px auto;
+            padding:25px;
+            border-radius:10px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.3);
+        "
+    >
+
+        <h2>Edit Load</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Load Number</label>
+                <input type="text" id="editLoadNumber">
+            </div>
+
+            <div>
+                <label>Date</label>
+                <input type="date" id="editLoadDate">
+            </div>
+
+            <div>
+                <label>Customer</label>
+                <input type="text" id="editCustomer">
+            </div>
+
+            <div>
+                <label>Driver</label>
+                <input type="text" id="editDriver">
+            </div>
+
+            <div>
+                <label>Pickup</label>
+                <input type="text" id="editPickup">
+            </div>
+
+            <div>
+                <label>Delivery</label>
+                <input type="text" id="editDelivery">
+            </div>
+
+            <div>
+                <label>Rate</label>
+                <input
+                    type="number"
+                    id="editRate"
+                    step="0.01"
+                >
+            </div>
+
+            <div>
+                <label>Load Status</label>
+
+                <select id="editLoadStatus">
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                    <option value="Cancelled">
+                        Cancelled
+                    </option>
+
+                </select>
+            </div>
+
+            <div>
+                <label>Invoice Status</label>
+
+                <select id="editInvoiceStatus">
+
+                    <option value="Not Invoiced">
+                        Not Invoiced
+                    </option>
+
+                    <option value="Invoiced">
+                        Invoiced
+                    </option>
+
+                </select>
+            </div>
+
+            <div>
+                <label>Payment Status</label>
+
+                <select id="editPaymentStatus">
+
+                    <option value="Unpaid">
+                        Unpaid
+                    </option>
+
+                    <option value="Paid">
+                        Paid
+                    </option>
+
+                </select>
+            </div>
+
+        </div>
+
+        <div
+            style="
+                display:flex;
+                gap:10px;
+                margin-top:20px;
+            "
+        >
+
+            <button
+                type="button"
+                onclick="saveEditedLoad()"
+            >
+                Save Changes
+            </button>
+
+            <button
+                type="button"
+                onclick="closeEditModal()"
+                style="background:#6b7280;"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 <script>
 
 const SUPABASE_URL = "https://fftrldhzkjzsncadralg.supabase.co";
@@ -1193,7 +1346,7 @@ async function deleteLoad(id) {
    EDIT LOAD
 ========================= */
 
-async function editLoad(id) {
+function editLoad(id) {
 
     const load = loads.find(
         item => item.id === id
@@ -1204,104 +1357,158 @@ async function editLoad(id) {
         return;
     }
 
+    // Fill the edit form with the existing load information
 
-    const newLoadNumber = prompt(
-        "Load Number:",
-        load.loadNumber
-    );
+    document.getElementById("editLoadNumber").value =
+        load.loadNumber;
 
-    if (newLoadNumber === null) {
+    document.getElementById("editLoadDate").value =
+        load.date;
+
+    document.getElementById("editCustomer").value =
+        load.customer;
+
+    document.getElementById("editDriver").value =
+        load.driver;
+
+    document.getElementById("editPickup").value =
+        load.pickup;
+
+    document.getElementById("editDelivery").value =
+        load.delivery;
+
+    document.getElementById("editRate").value =
+        load.rate;
+
+    document.getElementById("editLoadStatus").value =
+        load.loadStatus;
+
+    document.getElementById("editInvoiceStatus").value =
+        load.invoiceStatus;
+
+    document.getElementById("editPaymentStatus").value =
+        load.paymentStatus;
+
+
+    // Remember which load we are editing
+
+    document.getElementById("editModal").dataset.loadId =
+        id;
+
+
+    // Open popup
+
+    document.getElementById("editModal").style.display =
+        "block";
+
+}
+function closeEditModal() {
+
+    document.getElementById("editModal").style.display =
+        "none";
+
+}
+async function saveEditedLoad() {
+
+    const id =
+        Number(
+            document.getElementById("editModal")
+                .dataset.loadId
+        );
+
+
+    const load =
+        loads.find(
+            item => item.id === id
+        );
+
+
+    if (!load) {
+
+        alert("Load not found.");
+
         return;
+
     }
 
 
-    const newDate = prompt(
-        "Date (YYYY-MM-DD):",
-        load.date
-    );
+    const newLoadNumber =
+        document.getElementById(
+            "editLoadNumber"
+        ).value.trim();
 
-    if (newDate === null) {
+
+    const newDate =
+        document.getElementById(
+            "editLoadDate"
+        ).value;
+
+
+    const newCustomer =
+        document.getElementById(
+            "editCustomer"
+        ).value.trim();
+
+
+    const newDriver =
+        document.getElementById(
+            "editDriver"
+        ).value.trim();
+
+
+    const newPickup =
+        document.getElementById(
+            "editPickup"
+        ).value.trim();
+
+
+    const newDelivery =
+        document.getElementById(
+            "editDelivery"
+        ).value.trim();
+
+
+    const newRate =
+        Number(
+            document.getElementById(
+                "editRate"
+            ).value
+        );
+
+
+    const newLoadStatus =
+        document.getElementById(
+            "editLoadStatus"
+        ).value;
+
+
+    const newInvoiceStatus =
+        document.getElementById(
+            "editInvoiceStatus"
+        ).value;
+
+
+    const newPaymentStatus =
+        document.getElementById(
+            "editPaymentStatus"
+        ).value;
+
+
+    if (!newDate) {
+
+        alert("Please select a date.");
+
         return;
+
     }
 
 
-    const newCustomer = prompt(
-        "Customer:",
-        load.customer
-    );
+    if (isNaN(newRate)) {
 
-    if (newCustomer === null) {
+        alert("Please enter a valid rate.");
+
         return;
-    }
 
-
-    const newDriver = prompt(
-        "Driver:",
-        load.driver
-    );
-
-    if (newDriver === null) {
-        return;
-    }
-
-
-    const newPickup = prompt(
-        "Pickup:",
-        load.pickup
-    );
-
-    if (newPickup === null) {
-        return;
-    }
-
-
-    const newDelivery = prompt(
-        "Delivery:",
-        load.delivery
-    );
-
-    if (newDelivery === null) {
-        return;
-    }
-
-
-    const newRate = prompt(
-        "Rate:",
-        load.rate
-    );
-
-    if (newRate === null) {
-        return;
-    }
-
-
-    const newLoadStatus = prompt(
-        "Load Status (Pending / Completed / Cancelled):",
-        load.loadStatus
-    );
-
-    if (newLoadStatus === null) {
-        return;
-    }
-
-
-    const newInvoiceStatus = prompt(
-        "Invoice Status (Invoiced / Not Invoiced):",
-        load.invoiceStatus
-    );
-
-    if (newInvoiceStatus === null) {
-        return;
-    }
-
-
-    const newPaymentStatus = prompt(
-        "Payment Status (Paid / Unpaid):",
-        load.paymentStatus
-    );
-
-    if (newPaymentStatus === null) {
-        return;
     }
 
 
@@ -1311,25 +1518,25 @@ async function editLoad(id) {
             .update({
 
                 load_number:
-                    newLoadNumber.trim(),
+                    newLoadNumber,
 
                 load_date:
                     newDate,
 
                 customer:
-                    newCustomer.trim(),
+                    newCustomer,
 
                 driver:
-                    newDriver.trim(),
+                    newDriver,
 
                 pickup:
-                    newPickup.trim(),
+                    newPickup,
 
                 delivery:
-                    newDelivery.trim(),
+                    newDelivery,
 
                 rate:
-                    Number(newRate),
+                    newRate,
 
                 load_status:
                     newLoadStatus,
@@ -1354,11 +1561,14 @@ async function editLoad(id) {
         );
 
         return;
+
     }
 
 
+    // Update the local load
+
     load.loadNumber =
-        newLoadNumber.trim();
+        newLoadNumber;
 
     load.date =
         newDate;
@@ -1372,19 +1582,19 @@ async function editLoad(id) {
         );
 
     load.customer =
-        newCustomer.trim();
+        newCustomer;
 
     load.driver =
-        newDriver.trim();
+        newDriver;
 
     load.pickup =
-        newPickup.trim();
+        newPickup;
 
     load.delivery =
-        newDelivery.trim();
+        newDelivery;
 
     load.rate =
-        Number(newRate);
+        newRate;
 
     load.loadStatus =
         newLoadStatus;
@@ -1396,6 +1606,13 @@ async function editLoad(id) {
         newPaymentStatus;
 
 
+    // Close popup
+
+    closeEditModal();
+
+
+    // Refresh everything
+
     updateDriverFilter();
 
     filterLoads();
@@ -1405,6 +1622,7 @@ async function editLoad(id) {
     updateDailySummary();
 
     updateWeeklySummary();
+
 
     alert("Load updated successfully!");
 
