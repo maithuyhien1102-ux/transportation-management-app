@@ -612,6 +612,20 @@ th {
     <h3>Actual Net Profit</h3>
     <p id="filteredActualNetProfit">$0.00</p>
      </div>
+    <div class="dashboard-card">
+    <h3>Filtered Fuel</h3>
+    <p id="filteredFuel">$0.00</p>
+</div>
+
+<div class="dashboard-card">
+    <h3>Filtered Tolls</h3>
+    <p id="filteredTolls">$0.00</p>
+</div>
+
+<div class="dashboard-card">
+    <h3>Filtered Other Expenses</h3>
+    <p id="filteredOtherExpenses">$0.00</p>
+</div>
     <div class="card">
         <h3>Filtered Invoiced</h3>
         <p id="filteredInvoiced">$0.00</p>
@@ -2391,7 +2405,44 @@ function updateFilteredSummary(filteredLoads) {
                 total + Number(expense.amount || 0),
             0
         );
+   const totalFuel =
+    filteredExpenses
+        .filter(
+            expense =>
+                expense.category === "Fuel"
+        )
+        .reduce(
+            (total, expense) =>
+                total + Number(expense.amount || 0),
+            0
+        );
 
+
+const totalTolls =
+    filteredExpenses
+        .filter(
+            expense =>
+                expense.category === "Tolls"
+        )
+        .reduce(
+            (total, expense) =>
+                total + Number(expense.amount || 0),
+            0
+        );
+
+
+const totalOtherExpenses =
+    filteredExpenses
+        .filter(
+            expense =>
+                expense.category !== "Fuel" &&
+                expense.category !== "Tolls"
+        )
+        .reduce(
+            (total, expense) =>
+                total + Number(expense.amount || 0),
+            0
+        );
 
     // =========================
     // ACTUAL NET PROFIT
@@ -2455,7 +2506,22 @@ function updateFilteredSummary(filteredLoads) {
         "$" + outstanding.toFixed(2);
 
 }
+  document.getElementById(
+    "filteredFuel"
+).textContent =
+    "$" + totalFuel.toFixed(2);
 
+
+document.getElementById(
+    "filteredTolls"
+).textContent =
+    "$" + totalTolls.toFixed(2);
+
+
+document.getElementById(
+    "filteredOtherExpenses"
+).textContent =
+    "$" + totalOtherExpenses.toFixed(2);
 
 async function deleteLoad(id) {
 
