@@ -61,18 +61,22 @@ header p {
 
 .section {
     background: white;
-    padding: 22px;
-    border-radius: 12px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
 .section h2 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 20px;
+    color: #111827;
 }
-
+.section h3 {
+    color: #374151;
+}
 /* =========================
    DASHBOARD
 ========================= */
@@ -132,11 +136,8 @@ header p {
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(
-        auto-fit,
-        minmax(180px, 1fr)
-    );
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
 }
 
 label {
@@ -144,9 +145,8 @@ label {
     font-size: 13px;
     font-weight: 600;
     color: #374151;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
-
 input,
 select {
     width: 100%;
@@ -157,27 +157,36 @@ select {
     font-size: 14px;
 }
 
-input:focus,
-select:focus {
+input,
+select {
+    width: 100%;
+    padding: 11px 12px;
+    margin-top: 3px;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: white;
+    color: #111827;
+    font-size: 14px;
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
 }
 
-/* =========================
-   BUTTONS
-========================= */
-
+input:focus,
+select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
 button {
     width: 100%;
     padding: 11px 14px;
-    border: none;
-    border-radius: 7px;
     background: #2563eb;
     color: white;
-    font-weight: 600;
+    border: none;
+    border-radius: 7px;
     cursor: pointer;
-    transition: 0.15s;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.15s ease, transform 0.1s ease;
 }
 
 button:hover {
@@ -187,7 +196,6 @@ button:hover {
 button:active {
     transform: scale(0.98);
 }
-
 /* =========================
    TABLE
 ========================= */
