@@ -1631,6 +1631,339 @@ function displayExpenses() {
     });
 
 }
+    /* =========================
+   DELETE EXPENSE
+========================= */
+
+async function deleteExpense(id) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this expense?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("expenses")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error deleting expense: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    // Remove from local array
+    expenses =
+        expenses.filter(
+            expense =>
+                expense.id !== id
+        );
+
+
+    displayExpenses();
+
+    updateExpenseSummary();
+
+}
+/* =========================
+   EDIT EXPENSE
+========================= */
+
+function editExpense(id) {
+
+    const expense =
+        expenses.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!expense) {
+
+        alert("Expense not found.");
+
+        return;
+    }
+
+
+    document.getElementById(
+        "expenseDate"
+    ).value =
+        expense.date;
+
+
+    document.getElementById(
+        "expenseCategory"
+    ).value =
+        expense.category;
+
+
+    document.getElementById(
+        "expenseAmount"
+    ).value =
+        expense.amount;
+
+
+    document.getElementById(
+        "expenseDriver"
+    ).value =
+        expense.driver || "";
+
+
+    document.getElementById(
+        "expenseDescription"
+    ).value =
+        expense.description || "";
+
+
+    document.getElementById(
+        "expenseNotes"
+    ).value =
+        expense.notes || "";
+
+
+    // Store the ID being edited
+    document.getElementById(
+        "expenseManagement"
+    ).dataset.editingId =
+        id;
+
+
+    // Change button text
+    const button =
+        document.querySelector(
+            '#expenseManagement button[onclick="addExpense()"]'
+        );
+
+
+    if (button) {
+
+        button.textContent =
+            "Update Expense";
+
+        button.setAttribute(
+            "onclick",
+            "updateExpense()"
+        );
+
+    }
+
+
+    // Scroll to expense form
+    document.getElementById(
+        "expenseManagement"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+    /* =========================
+   UPDATE EXPENSE
+========================= */
+
+async function updateExpense() {
+
+    const container =
+        document.getElementById(
+            "expenseManagement"
+        );
+
+
+    const id =
+        Number(
+            container.dataset.editingId
+        );
+
+
+    if (!id) {
+
+        alert("No expense selected.");
+
+        return;
+    }
+
+
+    const dateValue =
+        document.getElementById(
+            "expenseDate"
+        ).value;
+
+
+    const categoryValue =
+        document.getElementById(
+            "expenseCategory"
+        ).value;
+
+
+    const amountValue =
+        Number(
+            document.getElementById(
+                "expenseAmount"
+            ).value
+        );
+
+
+    const driverValue =
+        document.getElementById(
+            "expenseDriver"
+        ).value;
+
+
+    const descriptionValue =
+        document.getElementById(
+            "expenseDescription"
+        ).value.trim();
+
+
+    const notesValue =
+        document.getElementById(
+            "expenseNotes"
+        ).value.trim();
+
+
+    if (!dateValue) {
+
+        alert("Please select an expense date.");
+
+        return;
+    }
+
+
+    if (!categoryValue) {
+
+        alert("Please select an expense category.");
+
+        return;
+    }
+
+
+    if (!amountValue || amountValue <= 0) {
+
+        alert("Please enter a valid expense amount.");
+
+        return;
+    }
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("expenses")
+            .update({
+
+                date:
+                    dateValue,
+
+                category:
+                    categoryValue,
+
+                amount:
+                    amountValue,
+
+                driver:
+                    driverValue || null,
+
+                description:
+                    descriptionValue,
+
+                notes:
+                    notesValue
+
+            })
+            .eq("id", id)
+            .select();
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error updating expense: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    // Update local array
+    const index =
+        expenses.findIndex(
+            expense =>
+                expense.id === id
+        );
+
+
+    if (index !== -1) {
+
+        expenses[index] = {
+
+            id: id,
+
+            date: dateValue,
+
+            category: categoryValue,
+
+            amount: amountValue,
+
+            driver: driverValue,
+
+            description: descriptionValue,
+
+            notes: notesValue
+
+        };
+
+    }
+
+
+    clearExpenseForm();
+
+
+    delete container.dataset.editingId;
+
+
+    const button =
+        document.querySelector(
+            '#expenseManagement button[onclick="updateExpense()"]'
+        );
+
+
+    if (button) {
+
+        button.textContent =
+            "Add Expense";
+
+        button.setAttribute(
+            "onclick",
+            "addExpense()"
+        );
+
+    }
+
+
+    displayExpenses();
+
+    updateExpenseSummary();
+
+    alert("Expense updated successfully!");
+
+}
 /* =========================
    EXPENSE SUMMARY
 ========================= */
