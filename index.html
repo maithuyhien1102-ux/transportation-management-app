@@ -7,7 +7,81 @@
 <title>Transportation Management</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+/* =========================
+   DRIVER MANAGEMENT
+========================= */
 
+.driver-management-section {
+    margin-bottom: 25px;
+}
+
+.section-header h2 {
+    margin-bottom: 5px;
+}
+
+.section-description {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.add-driver-box {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 15px;
+    align-items: end;
+    padding: 18px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.add-driver-box button {
+    background: #2563eb;
+}
+
+.subsection-title {
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 17px;
+    color: #111827;
+}
+
+.driver-table th {
+    background: #f3f4f6;
+}
+
+.driver-table td {
+    vertical-align: middle;
+}
+
+.driver-table td:nth-child(2),
+.driver-table td:nth-child(3),
+.driver-table td:nth-child(4),
+.driver-table td:nth-child(5) {
+    font-weight: 600;
+}
+
+.driver-table button {
+    width: auto;
+    padding: 7px 12px;
+    margin: 0 4px 0 0;
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+
+    .add-driver-box {
+        grid-template-columns: 1fr;
+    }
+
+    .driver-table {
+        min-width: 750px;
+    }
+
+}
 * {
     box-sizing: border-box;
 }
