@@ -3483,12 +3483,14 @@ function updateWeeklySummary() {
     const summary = {};
 
 
+    // =========================
+    // LOAD DATA
+    // =========================
+
     loads.forEach(load => {
 
         const week =
-            getWeekStart(
-                load.date
-            );
+            getWeekStart(load.date);
 
 
         if (!summary[week]) {
@@ -3499,9 +3501,17 @@ function updateWeeklySummary() {
 
                 revenue: 0,
 
+                driverPay: 0,
+
                 invoiced: 0,
 
-                paid: 0
+                paid: 0,
+
+                fuel: 0,
+
+                tolls: 0,
+
+                otherExpenses: 0
 
             };
 
@@ -3511,32 +3521,102 @@ function updateWeeklySummary() {
         summary[week].loads++;
 
         summary[week].revenue +=
-            load.rate;
+            Number(load.rate || 0);
+
+        summary[week].driverPay +=
+            Number(load.driverPay || 0);
 
 
         if (
-            load.invoiceStatus ===
-            "Invoiced"
+            load.invoiceStatus === "Invoiced"
         ) {
 
             summary[week].invoiced +=
-                load.rate;
+                Number(load.rate || 0);
 
         }
 
 
         if (
-            load.paymentStatus ===
-            "Paid"
+            load.paymentStatus === "Paid"
         ) {
 
             summary[week].paid +=
-                load.rate;
+                Number(load.rate || 0);
 
         }
 
     });
 
+
+    // =========================
+    // EXPENSE DATA
+    // =========================
+
+    expenses.forEach(expense => {
+
+        const week =
+            getWeekStart(expense.date);
+
+
+        if (!summary[week]) {
+
+            summary[week] = {
+
+                loads: 0,
+
+                revenue: 0,
+
+                driverPay: 0,
+
+                invoiced: 0,
+
+                paid: 0,
+
+                fuel: 0,
+
+                tolls: 0,
+
+                otherExpenses: 0
+
+            };
+
+        }
+
+
+        const amount =
+            Number(expense.amount || 0);
+
+
+        if (
+            expense.category === "Fuel"
+        ) {
+
+            summary[week].fuel +=
+                amount;
+
+        }
+        else if (
+            expense.category === "Tolls"
+        ) {
+
+            summary[week].tolls +=
+                amount;
+
+        }
+        else {
+
+            summary[week].otherExpenses +=
+                amount;
+
+        }
+
+    });
+
+
+    // =========================
+    // DISPLAY TABLE
+    // =========================
 
     const table =
         document.getElementById(
@@ -3555,13 +3635,28 @@ function updateWeeklySummary() {
                 summary[week];
 
 
+            const totalExpenses =
+                item.fuel +
+                item.tolls +
+                item.otherExpenses;
+
+
+            const loadProfit =
+                item.revenue -
+                item.driverPay;
+
+
+            const actualNetProfit =
+                loadProfit -
+                totalExpenses;
+
+
             table.innerHTML += `
 
                 <tr>
 
                     <td>
-                        Week starting
-                        ${week}
+                        Week starting ${week}
                     </td>
 
                     <td>
@@ -3573,11 +3668,25 @@ function updateWeeklySummary() {
                     </td>
 
                     <td>
-                        $${item.invoiced.toFixed(2)}
+                        $${item.driverPay.toFixed(2)}
                     </td>
 
                     <td>
-                        $${item.paid.toFixed(2)}
+                        $${item.fuel.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.tolls.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.otherExpenses.toFixed(2)}
+                    </td>
+
+                    <td>
+                        <strong>
+                            $${actualNetProfit.toFixed(2)}
+                        </strong>
                     </td>
 
                 </tr>
@@ -3587,7 +3696,6 @@ function updateWeeklySummary() {
         });
 
 }
-
 
 /* =========================
    START APP
