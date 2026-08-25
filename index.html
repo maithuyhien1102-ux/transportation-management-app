@@ -428,7 +428,162 @@ th {
 
 </div>
 
+<!-- =========================
+     EXPENSE MANAGEMENT
+========================= -->
 
+<section id="expenseManagement">
+
+    <h2>Expense Management</h2>
+
+    <div class="form-grid">
+
+        <div>
+            <label>Expense Date</label>
+
+            <input
+                type="date"
+                id="expenseDate"
+            >
+        </div>
+
+
+        <div>
+            <label>Category</label>
+
+            <select id="expenseCategory">
+
+                <option value="">Select Category</option>
+                <option value="Fuel">Fuel</option>
+                <option value="Tolls">Tolls</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Parking">Parking</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Other">Other</option>
+
+            </select>
+        </div>
+
+
+        <div>
+            <label>Amount</label>
+
+            <input
+                type="number"
+                id="expenseAmount"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+            >
+        </div>
+
+
+        <div>
+            <label>Driver</label>
+
+            <select id="expenseDriver">
+
+                <option value="">Company / None</option>
+
+            </select>
+        </div>
+
+
+        <div>
+            <label>Description</label>
+
+            <input
+                type="text"
+                id="expenseDescription"
+                placeholder="Example: Shell fuel"
+            >
+        </div>
+
+
+        <div>
+            <label>Notes</label>
+
+            <input
+                type="text"
+                id="expenseNotes"
+                placeholder="Optional"
+            >
+        </div>
+
+    </div>
+
+
+    <button
+        onclick="addExpense()"
+        style="margin-top:15px;"
+    >
+        Add Expense
+    </button>
+
+
+    <!-- Expense Summary -->
+
+    <div class="dashboard-grid" style="margin-top:20px;">
+
+        <div class="dashboard-card">
+            <h3>Total Expenses</h3>
+            <p id="totalExpenses">$0.00</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Fuel</h3>
+            <p id="totalFuel">$0.00</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Tolls</h3>
+            <p id="totalTolls">$0.00</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Other Expenses</h3>
+            <p id="totalOtherExpenses">$0.00</p>
+        </div>
+
+    </div>
+
+
+    <!-- Expense Records -->
+
+    <h3 style="margin-top:25px;">
+        Expense Records
+    </h3>
+
+
+    <div style="overflow-x:auto;">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Driver</th>
+                    <th>Description</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="expenseTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
 <!-- LOAD TABLE -->
 
 <div class="section">
@@ -791,7 +946,7 @@ const supabaseClient = supabase.createClient(
 
 let loads = [];
 let drivers = [];
-
+let expenses = [];
 
 /* =========================
    ADD LOAD
@@ -941,8 +1096,170 @@ load_status:
     updateWeeklySummary();
 
 }
+/* =========================
+   ADD EXPENSE
+========================= */
+
+async function addExpense() {
+
+    const dateValue =
+        document.getElementById("expenseDate").value;
+
+    const categoryValue =
+        document.getElementById("expenseCategory").value;
+
+    const amountValue =
+        Number(
+            document.getElementById("expenseAmount").value
+        );
+
+    const driverValue =
+        document.getElementById("expenseDriver").value;
+
+    const descriptionValue =
+        document.getElementById("expenseDescription").value.trim();
+
+    const notesValue =
+        document.getElementById("expenseNotes").value.trim();
 
 
+    // Check date
+    if (!dateValue) {
+
+        alert("Please select an expense date.");
+
+        return;
+    }
+
+
+    // Check category
+    if (!categoryValue) {
+
+        alert("Please select an expense category.");
+
+        return;
+    }
+
+
+    // Check amount
+    if (!amountValue || amountValue <= 0) {
+
+        alert("Please enter a valid expense amount.");
+
+        return;
+    }
+
+
+    const expense = {
+
+        date:
+            dateValue,
+
+        category:
+            categoryValue,
+
+        amount:
+            amountValue,
+
+        driver:
+            driverValue,
+
+        description:
+            descriptionValue,
+
+        notes:
+            notesValue
+
+    };
+
+
+    console.log("Saving expense:", expense);
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("expenses")
+            .insert([{
+
+                date:
+                    expense.date,
+
+                category:
+                    expense.category,
+
+                amount:
+                    expense.amount,
+
+                driver:
+                    expense.driver || null,
+
+                description:
+                    expense.description,
+
+                notes:
+                    expense.notes
+
+            }])
+            .select();
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Error saving expense: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    // Add to local expenses array
+    expenses.push({
+
+        id:
+            data[0].id,
+
+        ...expense
+
+    });
+
+
+    // Clear form
+    clearExpenseForm();
+
+
+    // Refresh expense display
+    displayExpenses();
+
+
+    updateExpenseSummary();
+
+
+    alert("Expense added successfully!");
+
+}
+/* =========================
+   CLEAR EXPENSE FORM
+========================= */
+
+function clearExpenseForm() {
+
+    document.getElementById("expenseDate").value = "";
+
+    document.getElementById("expenseCategory").value = "";
+
+    document.getElementById("expenseAmount").value = "";
+
+    document.getElementById("expenseDriver").value = "";
+
+    document.getElementById("expenseDescription").value = "";
+
+    document.getElementById("expenseNotes").value = "";
+
+}
 /* =========================
    CLEAR FORM
 ========================= */
@@ -1118,6 +1435,36 @@ function updateDriverFilter() {
 
 }
 async function loadDrivers() {
+    /* =========================
+   UPDATE EXPENSE DRIVER DROPDOWN
+========================= */
+
+function updateExpenseDriverDropdown() {
+
+    const expenseDriver =
+        document.getElementById("expenseDriver");
+
+    if (!expenseDriver) {
+        return;
+    }
+
+    expenseDriver.innerHTML =
+        '<option value="">Company / None</option>';
+
+    drivers.forEach(driver => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = driver.name;
+
+        option.textContent = driver.name;
+
+        expenseDriver.appendChild(option);
+
+    });
+
+}
 
     console.log("Starting loadDrivers...");
 
@@ -1160,8 +1507,208 @@ async function loadDrivers() {
 
     console.log("Drivers added to dropdown!");
     displayDriverList(drivers);
+    updateExpenseDriverDropdown();
 }
+/* =========================
+   LOAD EXPENSES
+========================= */
 
+async function loadExpenses() {
+
+    console.log("Starting loadExpenses...");
+
+    const { data, error } =
+        await supabaseClient
+            .from("expenses")
+            .select("*")
+            .order("date", { ascending: false });
+
+
+    console.log("Expense data:", data);
+    console.log("Expense error:", error);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Expense error: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    expenses = data || [];
+
+
+    displayExpenses();
+
+    updateExpenseSummary();
+
+}
+/* =========================
+   DISPLAY EXPENSES
+========================= */
+
+function displayExpenses() {
+
+    const table =
+        document.getElementById("expenseTable");
+
+
+    if (!table) {
+        return;
+    }
+
+
+    table.innerHTML = "";
+
+
+    expenses.forEach(expense => {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                ${expense.date}
+            </td>
+
+            <td>
+                ${expense.category}
+            </td>
+
+            <td>
+                $${Number(expense.amount).toFixed(2)}
+            </td>
+
+            <td>
+                ${expense.driver || "Company / None"}
+            </td>
+
+            <td>
+                ${expense.description || ""}
+            </td>
+
+            <td>
+                ${expense.notes || ""}
+            </td>
+
+            <td>
+
+                <button
+                    onclick="editExpense(${expense.id})"
+                    style="
+                        background:#f59e0b;
+                        margin-bottom:5px;
+                    "
+                >
+                    Edit
+                </button>
+
+
+                <button
+                    onclick="deleteExpense(${expense.id})"
+                    style="
+                        background:#dc2626;
+                    "
+                >
+                    Delete
+                </button>
+
+            </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+/* =========================
+   EXPENSE SUMMARY
+========================= */
+
+function updateExpenseSummary() {
+
+    const totalExpenses =
+        expenses.reduce(
+            (total, expense) =>
+                total + Number(expense.amount || 0),
+            0
+        );
+
+
+    const totalFuel =
+        expenses
+            .filter(
+                expense =>
+                    expense.category === "Fuel"
+            )
+            .reduce(
+                (total, expense) =>
+                    total + Number(expense.amount || 0),
+                0
+            );
+
+
+    const totalTolls =
+        expenses
+            .filter(
+                expense =>
+                    expense.category === "Tolls"
+            )
+            .reduce(
+                (total, expense) =>
+                    total + Number(expense.amount || 0),
+                0
+            );
+
+
+    const totalOtherExpenses =
+        expenses
+            .filter(
+                expense =>
+                    expense.category !== "Fuel" &&
+                    expense.category !== "Tolls"
+            )
+            .reduce(
+                (total, expense) =>
+                    total + Number(expense.amount || 0),
+                0
+            );
+
+
+    document.getElementById(
+        "totalExpenses"
+    ).textContent =
+        "$" + totalExpenses.toFixed(2);
+
+
+    document.getElementById(
+        "totalFuel"
+    ).textContent =
+        "$" + totalFuel.toFixed(2);
+
+
+    document.getElementById(
+        "totalTolls"
+    ).textContent =
+        "$" + totalTolls.toFixed(2);
+
+
+    document.getElementById(
+        "totalOtherExpenses"
+    ).textContent =
+        "$" + totalOtherExpenses.toFixed(2);
+
+}
 /* =========================
    DISPLAY LOADS
 ========================= */
@@ -2120,6 +2667,7 @@ function updateWeeklySummary() {
 
 loadData();
 loadDrivers();
+loadExpenses();
 async function addDriver() {
 
     const driverName =
