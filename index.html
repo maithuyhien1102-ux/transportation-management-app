@@ -605,8 +605,12 @@ th {
     <p id="filteredDriverPay">$0.00</p>
     </div>
     <div class="dashboard-card">
-    <h3>Net Profit</h3>
+    <h3>Load Profit</h3>
     <p id="filteredNetProfit">$0.00</p>
+     </div>
+    <div class="dashboard-card">
+    <h3>Actual Net Profit</h3>
+    <p id="filteredActualNetProfit">$0.00</p>
      </div>
     <div class="card">
         <h3>Filtered Invoiced</h3>
@@ -2270,7 +2274,7 @@ function clearFilters() {
 
 }
 /* =========================
-   FILTERED SUMMARY
+   FILTERED FINANCIAL SUMMARY
 ========================= */
 
 function updateFilteredSummary(filteredLoads) {
@@ -2279,10 +2283,14 @@ function updateFilteredSummary(filteredLoads) {
         filteredLoads.length;
 
 
+    // =========================
+    // LOAD CALCULATIONS
+    // =========================
+
     const revenue =
         filteredLoads.reduce(
             (total, load) =>
-                total + load.rate,
+                total + Number(load.rate || 0),
             0
         );
 
@@ -2290,13 +2298,13 @@ function updateFilteredSummary(filteredLoads) {
     const driverPay =
         filteredLoads.reduce(
             (total, load) =>
-                total + load.driverPay,
+                total + Number(load.driverPay || 0),
             0
         );
 
 
-    // Net Profit = Revenue - Driver Pay
-    const netProfit =
+    // Revenue - Driver Pay
+    const loadProfit =
         revenue - driverPay;
 
 
@@ -2308,7 +2316,7 @@ function updateFilteredSummary(filteredLoads) {
             )
             .reduce(
                 (total, load) =>
-                    total + load.rate,
+                    total + Number(load.rate || 0),
                 0
             );
 
@@ -2321,7 +2329,7 @@ function updateFilteredSummary(filteredLoads) {
             )
             .reduce(
                 (total, load) =>
-                    total + load.rate,
+                    total + Number(load.rate || 0),
                 0
             );
 
@@ -2329,6 +2337,73 @@ function updateFilteredSummary(filteredLoads) {
     const outstanding =
         revenue - paid;
 
+
+    // =========================
+    // EXPENSE FILTERS
+    // =========================
+
+    const startDate =
+        document.getElementById("startDate").value;
+
+
+    const endDate =
+        document.getElementById("endDate").value;
+
+
+    const driverValue =
+        document.getElementById("driverFilter").value;
+
+
+    const filteredExpenses =
+        expenses.filter(expense => {
+
+            const matchesStartDate =
+                startDate === "" ||
+                expense.date >= startDate;
+
+
+            const matchesEndDate =
+                endDate === "" ||
+                expense.date <= endDate;
+
+
+            const matchesDriver =
+                driverValue === "" ||
+                expense.driver === driverValue;
+
+
+            return (
+                matchesStartDate &&
+                matchesEndDate &&
+                matchesDriver
+            );
+
+        });
+
+
+    // =========================
+    // EXPENSE TOTAL
+    // =========================
+
+    const totalExpenses =
+        filteredExpenses.reduce(
+            (total, expense) =>
+                total + Number(expense.amount || 0),
+            0
+        );
+
+
+    // =========================
+    // ACTUAL NET PROFIT
+    // =========================
+
+    const actualNetProfit =
+        loadProfit - totalExpenses;
+
+
+    // =========================
+    // UPDATE DASHBOARD
+    // =========================
 
     document.getElementById(
         "filteredLoads"
@@ -2348,10 +2423,18 @@ function updateFilteredSummary(filteredLoads) {
         "$" + driverPay.toFixed(2);
 
 
+    // Load Profit
     document.getElementById(
         "filteredNetProfit"
     ).textContent =
-        "$" + netProfit.toFixed(2);
+        "$" + loadProfit.toFixed(2);
+
+
+    // Actual Net Profit
+    document.getElementById(
+        "filteredActualNetProfit"
+    ).textContent =
+        "$" + actualNetProfit.toFixed(2);
 
 
     document.getElementById(
@@ -2372,6 +2455,7 @@ function updateFilteredSummary(filteredLoads) {
         "$" + outstanding.toFixed(2);
 
 }
+
 
 async function deleteLoad(id) {
 
