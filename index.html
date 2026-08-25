@@ -445,7 +445,10 @@ th {
         <h3>Filtered Revenue</h3>
         <p id="filteredRevenue">$0.00</p>
     </div>
-
+    <div class="card">
+    <h3>Filtered Driver Pay</h3>
+    <p id="filteredDriverPay">$0.00</p>
+    </div>
     <div class="card">
         <h3>Filtered Invoiced</h3>
         <p id="filteredInvoiced">$0.00</p>
@@ -1398,7 +1401,12 @@ function updateFilteredSummary(filteredLoads) {
                 total + load.rate,
             0
         );
-
+     const driverPay =
+    filteredLoads.reduce(
+        (total, load) =>
+            total + load.driverPay,
+        0
+    );
 
     const invoiced =
         filteredLoads
@@ -1446,7 +1454,10 @@ function updateFilteredSummary(filteredLoads) {
         "filteredInvoiced"
     ).textContent =
         "$" + invoiced.toFixed(2);
-
+   document.getElementById(
+    "filteredDriverPay"
+    ).textContent =
+        "$" + driverPay.toFixed(2);
 
     document.getElementById(
         "filteredPaid"
