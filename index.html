@@ -79,38 +79,39 @@ header p {
 
 .dashboard {
     display: grid;
-    grid-template-columns: repeat(
-        auto-fit,
-        minmax(180px, 1fr)
-    );
-    gap: 15px;
-    margin-bottom: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 18px;
+    margin-bottom: 30px;
 }
 
-.card,
-.dashboard-card {
+.card {
     background: white;
-    padding: 18px;
+    padding: 22px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     border: 1px solid #e5e7eb;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.card h3,
-.dashboard-card h3 {
-    margin: 0 0 8px;
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+}
+.card h3 {
+    margin: 0 0 10px;
     font-size: 13px;
     font-weight: 600;
     color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
 }
 
-.card p,
-.dashboard-card p {
+.card p {
+    font-size: 27px;
+    font-weight: 700;
     margin: 0;
-    font-size: 24px;
-    font-weight: bold;
+    color: #111827;
 }
-
 /* =========================
    FINANCIAL CARDS
 ========================= */
