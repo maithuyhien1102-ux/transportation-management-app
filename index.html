@@ -449,6 +449,10 @@ th {
     <h3>Filtered Driver Pay</h3>
     <p id="filteredDriverPay">$0.00</p>
     </div>
+    <div class="dashboard-card">
+    <h3>Net Profit</h3>
+    <p id="filteredNetProfit">$0.00</p>
+     </div>
     <div class="card">
         <h3>Filtered Invoiced</h3>
         <p id="filteredInvoiced">$0.00</p>
@@ -1401,12 +1405,20 @@ function updateFilteredSummary(filteredLoads) {
                 total + load.rate,
             0
         );
-     const driverPay =
-    filteredLoads.reduce(
-        (total, load) =>
-            total + load.driverPay,
-        0
-    );
+
+
+    const driverPay =
+        filteredLoads.reduce(
+            (total, load) =>
+                total + load.driverPay,
+            0
+        );
+
+
+    // Net Profit = Revenue - Driver Pay
+    const netProfit =
+        revenue - driverPay;
+
 
     const invoiced =
         filteredLoads
@@ -1451,13 +1463,22 @@ function updateFilteredSummary(filteredLoads) {
 
 
     document.getElementById(
+        "filteredDriverPay"
+    ).textContent =
+        "$" + driverPay.toFixed(2);
+
+
+    document.getElementById(
+        "filteredNetProfit"
+    ).textContent =
+        "$" + netProfit.toFixed(2);
+
+
+    document.getElementById(
         "filteredInvoiced"
     ).textContent =
         "$" + invoiced.toFixed(2);
-   document.getElementById(
-    "filteredDriverPay"
-    ).textContent =
-        "$" + driverPay.toFixed(2);
+
 
     document.getElementById(
         "filteredPaid"
@@ -1471,10 +1492,6 @@ function updateFilteredSummary(filteredLoads) {
         "$" + outstanding.toFixed(2);
 
 }
-
-/* =========================
-   DELETE LOAD
-========================= */
 
 async function deleteLoad(id) {
 
