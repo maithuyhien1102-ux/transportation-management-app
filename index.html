@@ -3869,38 +3869,104 @@ function displayDriverList(driversList) {
 
     table.innerHTML = "";
 
+
     driversList.forEach(driver => {
+
+        // =========================
+        // DRIVER LOADS
+        // =========================
+
+        const driverLoads =
+            loads.filter(
+                load =>
+                    load.driver === driver.name
+            );
+
+
+        // =========================
+        // DRIVER REVENUE
+        // =========================
+
+        const revenue =
+            driverLoads.reduce(
+                (total, load) =>
+                    total + Number(load.rate || 0),
+                0
+            );
+
+
+        // =========================
+        // DRIVER PAY
+        // =========================
+
+        const driverPay =
+            driverLoads.reduce(
+                (total, load) =>
+                    total + Number(load.driverPay || 0),
+                0
+            );
+
+
+        // =========================
+        // LOAD PROFIT
+        // =========================
+
+        const loadProfit =
+            revenue - driverPay;
+
+
+        // =========================
+        // CREATE ROW
+        // =========================
 
         const row =
             document.createElement("tr");
 
-        const loadCount = loads.filter(
-    load => load.driver === driver.name
-).length;
-        console.log(
-    "Driver:",
-    driver.name,
-    "Load count:",
-    loadCount
-);
 
-row.innerHTML = `
-    <td>${driver.name}</td>
+        row.innerHTML = `
 
-    <td>${loadCount}</td>
+            <td>
+                <strong>
+                    ${driver.name}
+                </strong>
+            </td>
 
-    <td>
-        <button
-            onclick="editDriver(${driver.id})"
-            style="background:#f59e0b;"
-        >
-            Edit
-        </button>
-    </td>
-`;
+            <td>
+                ${driverLoads.length}
+            </td>
+
+            <td>
+                $${revenue.toFixed(2)}
+            </td>
+
+            <td>
+                $${driverPay.toFixed(2)}
+            </td>
+
+            <td>
+                $${loadProfit.toFixed(2)}
+            </td>
+
+            <td>
+
+                <button
+                    onclick="editDriver(${driver.id})"
+                    style="
+                        background:#f59e0b;
+                    "
+                >
+                    Edit
+                </button>
+
+            </td>
+
+        `;
+
+
         table.appendChild(row);
 
     });
+
 }
 async function editDriver(id) {
 
