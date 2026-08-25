@@ -536,7 +536,153 @@ tbody tr:hover {
     }
 
 }
+/* =========================
+   DRIVER MANAGEMENT
+========================= */
 
+.driver-management {
+    padding: 25px;
+}
+
+.driver-management .section-header {
+    margin-bottom: 25px;
+}
+
+.driver-management h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #111827;
+}
+
+.section-description {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* ADD DRIVER AREA */
+
+.driver-add-box {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.driver-input-group {
+    flex: 1;
+}
+
+.driver-input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.driver-input-group input {
+    margin-top: 0;
+    height: 42px;
+}
+
+
+/* ADD BUTTON */
+
+.add-driver-button {
+    width: auto;
+    min-width: 130px;
+    height: 42px;
+    margin-top: 0;
+    padding: 0 18px;
+}
+
+
+/* DRIVER LIST HEADER */
+
+.driver-list-header {
+    margin-bottom: 15px;
+}
+
+.driver-list-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #111827;
+}
+
+.driver-list-header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+
+/* DRIVER TABLE */
+
+.driver-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.driver-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.driver-table th {
+    background: #f8fafc;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 13px 15px;
+    text-align: left;
+}
+
+.driver-table td {
+    padding: 14px 15px;
+    border-top: 1px solid #e5e7eb;
+    color: #374151;
+}
+
+.driver-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+
+/* EDIT BUTTON */
+
+.driver-table button {
+    width: auto;
+    margin: 0;
+    padding: 7px 14px;
+    background: #f59e0b;
+    border-radius: 6px;
+}
+
+.driver-table button:hover {
+    background: #d97706;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .driver-add-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-driver-button {
+        width: 100%;
+    }
+
+}
 </style>
 
 
