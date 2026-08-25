@@ -2290,7 +2290,6 @@ function clearFilters() {
 /* =========================
    FILTERED FINANCIAL SUMMARY
 ========================= */
-
 function updateFilteredSummary(filteredLoads) {
 
     const totalLoads =
@@ -2405,44 +2404,47 @@ function updateFilteredSummary(filteredLoads) {
                 total + Number(expense.amount || 0),
             0
         );
-   const totalFuel =
-    filteredExpenses
-        .filter(
-            expense =>
-                expense.category === "Fuel"
-        )
-        .reduce(
-            (total, expense) =>
-                total + Number(expense.amount || 0),
-            0
-        );
 
 
-const totalTolls =
-    filteredExpenses
-        .filter(
-            expense =>
-                expense.category === "Tolls"
-        )
-        .reduce(
-            (total, expense) =>
-                total + Number(expense.amount || 0),
-            0
-        );
+    const totalFuel =
+        filteredExpenses
+            .filter(
+                expense =>
+                    expense.category === "Fuel"
+            )
+            .reduce(
+                (total, expense) =>
+                    total + Number(expense.amount || 0),
+                0
+            );
 
 
-const totalOtherExpenses =
-    filteredExpenses
-        .filter(
-            expense =>
-                expense.category !== "Fuel" &&
-                expense.category !== "Tolls"
-        )
-        .reduce(
-            (total, expense) =>
-                total + Number(expense.amount || 0),
-            0
-        );
+    const totalTolls =
+        filteredExpenses
+            .filter(
+                expense =>
+                    expense.category === "Tolls"
+            )
+            .reduce(
+                (total, expense) =>
+                    total + Number(expense.amount || 0),
+                0
+            );
+
+
+    const totalOtherExpenses =
+        filteredExpenses
+            .filter(
+                expense =>
+                    expense.category !== "Fuel" &&
+                    expense.category !== "Tolls"
+            )
+            .reduce(
+                (total, expense) =>
+                    total + Number(expense.amount || 0),
+                0
+            );
+
 
     // =========================
     // ACTUAL NET PROFIT
@@ -2488,6 +2490,27 @@ const totalOtherExpenses =
         "$" + actualNetProfit.toFixed(2);
 
 
+    // Fuel
+    document.getElementById(
+        "filteredFuel"
+    ).textContent =
+        "$" + totalFuel.toFixed(2);
+
+
+    // Tolls
+    document.getElementById(
+        "filteredTolls"
+    ).textContent =
+        "$" + totalTolls.toFixed(2);
+
+
+    // Other Expenses
+    document.getElementById(
+        "filteredOtherExpenses"
+    ).textContent =
+        "$" + totalOtherExpenses.toFixed(2);
+
+
     document.getElementById(
         "filteredInvoiced"
     ).textContent =
@@ -2506,23 +2529,6 @@ const totalOtherExpenses =
         "$" + outstanding.toFixed(2);
 
 }
-  document.getElementById(
-    "filteredFuel"
-).textContent =
-    "$" + totalFuel.toFixed(2);
-
-
-document.getElementById(
-    "filteredTolls"
-).textContent =
-    "$" + totalTolls.toFixed(2);
-
-
-document.getElementById(
-    "filteredOtherExpenses"
-).textContent =
-    "$" + totalOtherExpenses.toFixed(2);
-
 async function deleteLoad(id) {
 
     const confirmed = confirm(
