@@ -699,30 +699,22 @@ tbody tr:hover {
 
 </div>
 
-<!-- =========================
-     DRIVER MANAGEMENT
-========================= -->
+<!-- DRIVER MANAGEMENT -->
 
-<div class="section driver-management-section">
+<div class="section driver-management">
 
     <div class="section-header">
-
         <div>
             <h2>Driver Management</h2>
-
             <p class="section-description">
                 Manage drivers and view their load performance.
             </p>
         </div>
-
     </div>
 
+    <div class="driver-add-box">
 
-    <!-- ADD DRIVER -->
-
-    <div class="add-driver-box">
-
-        <div>
+        <div class="driver-input-group">
 
             <label>Driver Name</label>
 
@@ -734,47 +726,44 @@ tbody tr:hover {
 
         </div>
 
-
-        <div>
-
-            <button
-                type="button"
-                onclick="addDriver()"
-            >
-                + Add Driver
-            </button>
-
-        </div>
+        <button
+            type="button"
+            onclick="addDriver()"
+            class="add-driver-button"
+        >
+            + Add Driver
+        </button>
 
     </div>
 
 
     <!-- DRIVER LIST -->
 
-    <h3 class="subsection-title">
-        Drivers
-    </h3>
+    <div class="driver-list-header">
+
+        <div>
+            <h3>Drivers</h3>
+            <p>
+                View driver activity and load count.
+            </p>
+        </div>
+
+    </div>
 
 
-    <div class="summary-table">
+    <div class="driver-table-wrapper">
 
         <table class="driver-table">
 
             <thead>
 
                 <tr>
-
                     <th>Driver</th>
-                    <th>Loads</th>
-                    <th>Revenue</th>
-                    <th>Driver Pay</th>
-                    <th>Load Profit</th>
-                    <th>Actions</th>
-
+                    <th>Total Loads</th>
+                    <th>Action</th>
                 </tr>
 
             </thead>
-
 
             <tbody id="driverTable"></tbody>
 
@@ -783,39 +772,6 @@ tbody tr:hover {
     </div>
 
 </div>
-<!-- DAILY SUMMARY -->
-
-<div class="section">
-
-<h2>Daily Summary</h2>
-
-<div class="summary-table">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Day</th>
-<th>Loads</th>
-<th>Revenue</th>
-<th>Invoiced</th>
-<th>Paid</th>
-
-</tr>
-
-</thead>
-
-<tbody id="dailySummary"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
 <!-- =========================
      WEEKLY SUMMARY
 ========================= -->
