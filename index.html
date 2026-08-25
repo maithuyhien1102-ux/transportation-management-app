@@ -624,15 +624,32 @@ tbody tr:hover {
 </div>
 
 </div>
-<!-- DRIVER MANAGEMENT -->
 
-<div class="section">
+<!-- =========================
+     DRIVER MANAGEMENT
+========================= -->
 
-    <h2>Driver Management</h2>
+<div class="section driver-management-section">
 
-    <div class="form-grid">
+    <div class="section-header">
 
         <div>
+            <h2>Driver Management</h2>
+
+            <p class="section-description">
+                Manage drivers and view their load performance.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- ADD DRIVER -->
+
+    <div class="add-driver-box">
+
+        <div>
+
             <label>Driver Name</label>
 
             <input
@@ -640,42 +657,58 @@ tbody tr:hover {
                 id="newDriverName"
                 placeholder="Enter driver name"
             >
+
         </div>
 
+
         <div>
-            <button onclick="addDriver()">
-                Add Driver
+
+            <button
+                type="button"
+                onclick="addDriver()"
+            >
+                + Add Driver
             </button>
+
         </div>
 
     </div>
 
-</div>
-<div class="section">
 
-    <h2>Driver List</h2>
+    <!-- DRIVER LIST -->
+
+    <h3 class="subsection-title">
+        Drivers
+    </h3>
+
 
     <div class="summary-table">
 
-        <table>
+        <table class="driver-table">
 
             <thead>
+
                 <tr>
+
                     <th>Driver</th>
                     <th>Loads</th>
-                    <th>Action</th>
+                    <th>Revenue</th>
+                    <th>Driver Pay</th>
+                    <th>Load Profit</th>
+                    <th>Actions</th>
+
                 </tr>
+
             </thead>
 
-            <tbody id="driverTable">
-            </tbody>
+
+            <tbody id="driverTable"></tbody>
 
         </table>
 
     </div>
 
 </div>
-
 <!-- DAILY SUMMARY -->
 
 <div class="section">
