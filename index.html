@@ -8,118 +8,238 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background: #f4f6f8;
-    color: #1f2937;
+    background: #f7f8fa;
+    color: #111827;
 }
+/* =========================
+   HEADER
+========================= */
 
 header {
-    background: #1f2937;
+    background: #111827;
     color: white;
-    padding: 25px;
+    padding: 30px;
+    border-bottom: 4px solid #2563eb;
 }
 
 header h1 {
     margin: 0;
+    font-size: 28px;
+    font-weight: 700;
 }
+
+header p {
+    margin: 6px 0 0;
+    color: #d1d5db;
+}
+header p {
+    margin: 6px 0 0;
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+/* =========================
+   CONTAINER
+========================= */
 
 .container {
-    max-width: 1400px;
+    max-width: 1500px;
     margin: auto;
-    padding: 20px;
+    padding: 25px;
 }
 
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.card h3 {
-    margin-top: 0;
-    font-size: 15px;
-    color: #6b7280;
-}
-
-.card p {
-    font-size: 25px;
-    font-weight: bold;
-    margin-bottom: 0;
-}
+/* =========================
+   SECTION
+========================= */
 
 .section {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
+
+.section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(180px, 1fr)
+    );
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card,
+.dashboard-card {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+}
+
+.card h3,
+.dashboard-card h3 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.card p,
+.dashboard-card p {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* =========================
+   FINANCIAL CARDS
+========================= */
+
+.financial-dashboard {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(180px, 1fr)
+    );
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* =========================
+   FORMS
+========================= */
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(180px, 1fr)
+    );
+    gap: 16px;
 }
 
 label {
+    display: block;
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 5px;
 }
 
-input, select, button {
+input,
+select {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: white;
+    font-size: 14px;
 }
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+}
+
+/* =========================
+   BUTTONS
+========================= */
 
 button {
+    width: 100%;
+    padding: 11px 14px;
+    border: none;
+    border-radius: 7px;
     background: #2563eb;
     color: white;
-    border: none;
-    border-radius: 5px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
+    transition: 0.15s;
 }
 
 button:hover {
     background: #1d4ed8;
 }
 
+button:active {
+    transform: scale(0.98);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.summary-table {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    min-width: 700px;
 }
 
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+th {
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
     text-align: left;
     white-space: nowrap;
 }
 
-th {
-    background: #e5e7eb;
+td {
+    font-size: 13px;
 }
 
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* =========================
+   STATUS
+========================= */
+
 .status-paid {
-    color: green;
+    color: #15803d;
     font-weight: bold;
 }
 
 .status-unpaid {
-    color: red;
+    color: #dc2626;
     font-weight: bold;
 }
 
@@ -132,27 +252,95 @@ th {
     color: #6b7280;
 }
 
-.summary-table {
-    overflow-x: auto;
+/* =========================
+   FILTER AREA
+========================= */
+
+.filter-area {
+    background: #f9fafb;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 18px;
 }
+
+/* =========================
+   SECTION HEADER
+========================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 700px) {
 
+    header {
+        padding: 18px;
+    }
+
+    header h1 {
+        font-size: 21px;
+    }
+
     .container {
-        padding: 10px;
+        padding: 12px;
+    }
+
+    .section {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .dashboard,
+    .financial-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .card,
+    .dashboard-card {
+        padding: 14px;
+    }
+
+    .card p,
+    .dashboard-card p {
+        font-size: 20px;
     }
 
     table {
         font-size: 12px;
     }
 
-    th, td {
-        padding: 7px;
+    th,
+    td {
+        padding: 9px;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .dashboard,
+    .financial-dashboard {
+        grid-template-columns: 1fr;
     }
 
 }
 
 </style>
+
+
 </head>
 
 <body>
