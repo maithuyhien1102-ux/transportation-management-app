@@ -3286,23 +3286,20 @@ function displayLoadList(list) {
             <td>
 
                 <button
-                    onclick="editLoad(${load.id})"
-                    style="
-                        background:#f59e0b;
-                        margin-bottom:5px;
-                    "
-                >
-                    Edit
-                </button>
+    type="button"
+    class="load-edit-button"
+    onclick="editLoad(${load.id})"
+>
+    Edit
+</button>
 
-                <button
-                    onclick="deleteLoad(${load.id})"
-                    style="
-                        background:#dc2626;
-                    "
-                >
-                    Delete
-                </button>
+<button
+    type="button"
+    class="load-delete-button"
+    onclick="deleteLoad(${load.id})"
+>
+    Delete
+</button>
 
             </td>
 
