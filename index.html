@@ -886,7 +886,78 @@ tbody tr:hover {
         </button>
 
     </div>
+ <!-- DRIVER DETAILS -->
 
+<div id="driverDetails" class="driver-details" style="display:none;">
+
+    <div class="driver-details-header">
+
+        <div>
+            <h3 id="selectedDriverName">
+                Driver Details
+            </h3>
+
+            <p>
+                Performance overview
+            </p>
+        </div>
+
+        <button
+            type="button"
+            onclick="closeDriverDetails()"
+            class="close-driver-button"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="driver-stats">
+
+        <div class="driver-stat-card">
+            <span>Total Loads</span>
+            <strong id="driverDetailLoads">0</strong>
+        </div>
+
+        <div class="driver-stat-card">
+            <span>Total Revenue</span>
+            <strong id="driverDetailRevenue">
+                $0.00
+            </strong>
+        </div>
+
+        <div class="driver-stat-card">
+            <span>Driver Pay</span>
+            <strong id="driverDetailPay">
+                $0.00
+            </strong>
+        </div>
+
+        <div class="driver-stat-card">
+            <span>Load Profit</span>
+            <strong id="driverDetailProfit">
+                $0.00
+            </strong>
+        </div>
+
+        <div class="driver-stat-card">
+            <span>Avg. Revenue / Load</span>
+            <strong id="driverDetailAvgRevenue">
+                $0.00
+            </strong>
+        </div>
+
+        <div class="driver-stat-card">
+            <span>Avg. Driver Pay / Load</span>
+            <strong id="driverDetailAvgPay">
+                $0.00
+            </strong>
+        </div>
+
+    </div>
+
+</div>
 
     <!-- DRIVER LIST -->
 
