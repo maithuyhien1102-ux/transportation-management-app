@@ -4382,6 +4382,22 @@ function showDriverDetails(driverName) {
     ).style.display = "block";
 
 }
+/* =========================
+   CLOSE DRIVER DETAILS
+========================= */
+
+function closeDriverDetails() {
+
+    const driverDetails =
+        document.getElementById("driverDetails");
+
+    if (!driverDetails) {
+        return;
+    }
+
+    driverDetails.style.display = "none";
+
+}
 async function editDriver(id) {
 
     const driver = drivers.find(
