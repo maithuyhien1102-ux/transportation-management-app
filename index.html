@@ -3979,24 +3979,18 @@ function displayDriverList(driversList) {
 
     table.innerHTML = "";
 
-
     driversList.forEach(driver => {
 
-        // =========================
-        // DRIVER LOADS
-        // =========================
+        // Get this driver's loads
+        const driverLoads = loads.filter(
+            load => load.driver === driver.name
+        );
 
-        const driverLoads =
-            loads.filter(
-                load =>
-                    load.driver === driver.name
-            );
+        // Total loads
+        const loadCount =
+            driverLoads.length;
 
-
-        // =========================
-        // DRIVER REVENUE
-        // =========================
-
+        // Total revenue
         const revenue =
             driverLoads.reduce(
                 (total, load) =>
@@ -4004,11 +3998,7 @@ function displayDriverList(driversList) {
                 0
             );
 
-
-        // =========================
-        // DRIVER PAY
-        // =========================
-
+        // Total driver pay
         const driverPay =
             driverLoads.reduce(
                 (total, load) =>
@@ -4016,18 +4006,10 @@ function displayDriverList(driversList) {
                 0
             );
 
-
-        // =========================
-        // LOAD PROFIT
-        // =========================
-
+        // Load profit
         const loadProfit =
             revenue - driverPay;
 
-
-        // =========================
-        // CREATE ROW
-        // =========================
 
         const row =
             document.createElement("tr");
@@ -4036,13 +4018,11 @@ function displayDriverList(driversList) {
         row.innerHTML = `
 
             <td>
-                <strong>
-                    ${driver.name}
-                </strong>
+                <strong>${driver.name}</strong>
             </td>
 
             <td>
-                ${driverLoads.length}
+                ${loadCount}
             </td>
 
             <td>
@@ -4054,16 +4034,16 @@ function displayDriverList(driversList) {
             </td>
 
             <td>
-                $${loadProfit.toFixed(2)}
+                <strong>
+                    $${loadProfit.toFixed(2)}
+                </strong>
             </td>
 
             <td>
 
                 <button
                     onclick="editDriver(${driver.id})"
-                    style="
-                        background:#f59e0b;
-                    "
+                    style="background:#f59e0b;"
                 >
                     Edit
                 </button>
@@ -4071,7 +4051,6 @@ function displayDriverList(driversList) {
             </td>
 
         `;
-
 
         table.appendChild(row);
 
