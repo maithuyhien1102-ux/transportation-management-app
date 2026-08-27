@@ -4160,6 +4160,31 @@ async function addDriver() {
         return;
     }
 
+
+    // =========================
+    // CHECK FOR DUPLICATE DRIVER
+    // =========================
+
+    const duplicateDriver = drivers.find(
+        driver =>
+            driver.name.toLowerCase() ===
+            driverName.toLowerCase()
+    );
+
+    if (duplicateDriver) {
+
+        alert(
+            "A driver with this name already exists."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // ADD DRIVER TO SUPABASE
+    // =========================
+
     const { data, error } =
         await supabaseClient
             .from("drivers")
@@ -4170,125 +4195,56 @@ async function addDriver() {
             ])
             .select();
 
+
     if (error) {
 
-        console.error(error);
-
-        alert(
-            "Error adding driver: " +
-            error.message
+        console.error(
+            "Error adding driver:",
+            error
         );
+
+
+        // Handle duplicate name
+        if (
+            error.code === "23505" ||
+            error.message.includes(
+                "drivers_name_key"
+            )
+        ) {
+
+            alert(
+                "A driver with this name already exists."
+            );
+
+        } else {
+
+            alert(
+                "Error adding driver: " +
+                error.message
+            );
+
+        }
 
         return;
     }
+
+
+    // =========================
+    // SUCCESS
+    // =========================
 
     alert(
         driverName +
         " was added successfully!"
     );
 
+
     document.getElementById(
         "newDriverName"
     ).value = "";
 
-    loadDrivers();
-}
-function displayDriverList(driversList) {
 
-    const table =
-        document.getElementById("driverTable");
-
-    if (!table) {
-        return;
-    }
-
-    table.innerHTML = "";
-
-    driversList.forEach(driver => {
-
-        // Get this driver's loads
-        const driverLoads = loads.filter(
-            load => load.driver === driver.name
-        );
-
-        // Total loads
-        const loadCount =
-            driverLoads.length;
-
-        // Total revenue
-        const revenue =
-            driverLoads.reduce(
-                (total, load) =>
-                    total + Number(load.rate || 0),
-                0
-            );
-
-        // Total driver pay
-        const driverPay =
-            driverLoads.reduce(
-                (total, load) =>
-                    total + Number(load.driverPay || 0),
-                0
-            );
-
-        // Load profit
-        const loadProfit =
-            revenue - driverPay;
-
-
-        const row =
-            document.createElement("tr");
-
-
-        row.innerHTML = `
-
-            <td>
-                <strong>${driver.name}</strong>
-            </td>
-
-            <td>
-                ${loadCount}
-            </td>
-
-            <td>
-                $${revenue.toFixed(2)}
-            </td>
-
-            <td>
-                $${driverPay.toFixed(2)}
-            </td>
-
-            <td>
-                <strong>
-                    $${loadProfit.toFixed(2)}
-                </strong>
-            </td>
-
-            <td>
-
-    <button
-        type="button"
-        class="driver-action-button"
-        onclick="showDriverDetails('${driver.name.replace(/'/g, "\\'")}')"
-    >
-        View
-    </button>
-
-    <button
-        type="button"
-        class="driver-action-button"
-        onclick="editDriver(${driver.id})"
-        style="margin-left: 6px;"
-    >
-        Edit
-    </button>
-
-</td>
-        `;
-
-        table.appendChild(row);
-
-    });
+    await loadDrivers();
 
 }
 /* =========================
