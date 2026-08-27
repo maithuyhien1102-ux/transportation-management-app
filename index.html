@@ -3676,44 +3676,120 @@ function updateFilteredSummary(filteredLoads) {
 }
 async function deleteLoad(id) {
 
-    const confirmed = confirm(
-        "Are you sure you want to delete this load?"
-    );
+    const load =
+        loads.find(
+            item => item.id === id
+        );
+
+    if (!load) {
+        alert("Load not found.");
+        return;
+    }
+
+
+    // =========================
+    // CONFIRM DELETE
+    // =========================
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete load " +
+            load.loadNumber +
+            "?"
+        );
 
     if (!confirmed) {
         return;
     }
 
-    const { error } = await supabaseClient
-        .from("loads")
-        .delete()
-        .eq("id", id);
+
+    // =========================
+    // DELETE FROM SUPABASE
+    // =========================
+
+    const { data, error } =
+        await supabaseClient
+            .from("loads")
+            .delete()
+            .eq("id", id)
+            .select();
+
+
+    // =========================
+    // CHECK FOR DATABASE ERROR
+    // =========================
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Error deleting load:",
+            error
+        );
 
         alert(
-            "Error deleting load: " +
+            "Error deleting load:\n\n" +
             error.message
         );
 
         return;
     }
 
-    loads = loads.filter(
-        load => load.id !== id
-    );
+
+    // =========================
+    // VERIFY DELETION
+    // =========================
+
+    if (!data || data.length === 0) {
+
+        console.error(
+            "Supabase did not delete the load.",
+            {
+                id: id,
+                loadNumber: load.loadNumber
+            }
+        );
+
+        alert(
+            "The load could not be deleted from the database.\n\n" +
+            "This may be caused by Supabase Row Level Security (RLS) permissions."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // REMOVE FROM LOCAL DATA
+    // =========================
+
+    loads =
+        loads.filter(
+            item => item.id !== id
+        );
+
+
+    // =========================
+    // REFRESH EVERYTHING
+    // =========================
 
     updateDriverFilter();
+
     filterLoads();
+
     updateDashboard();
+
     updateDailySummary();
+
     updateWeeklySummary();
 
-    alert("Load deleted successfully!");
-}
 
+    alert(
+        "Load " +
+        load.loadNumber +
+        " was deleted successfully!"
+    );
+
+}
 /* =========================
    EDIT LOAD
 ========================= */
