@@ -4646,7 +4646,6 @@ if (duplicateDriver) {
 /* =========================
    DELETE DRIVER
 ========================= */
-
 async function deleteDriver(id) {
 
     const driver =
@@ -4704,12 +4703,17 @@ async function deleteDriver(id) {
     // DELETE FROM SUPABASE
     // =========================
 
-    const { error } =
+    const { data, error } =
         await supabaseClient
             .from("drivers")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .select();
 
+
+    // =========================
+    // CHECK FOR DATABASE ERROR
+    // =========================
 
     if (error) {
 
@@ -4719,8 +4723,31 @@ async function deleteDriver(id) {
         );
 
         alert(
-            "Error deleting driver: " +
+            "Error deleting driver:\n\n" +
             error.message
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // VERIFY DELETION
+    // =========================
+
+    if (!data || data.length === 0) {
+
+        console.error(
+            "Supabase did not delete the driver.",
+            {
+                id: id,
+                driver: driver.name
+            }
+        );
+
+        alert(
+            "The driver could not be deleted from the database.\n\n" +
+            "This may be caused by Supabase Row Level Security (RLS) permissions."
         );
 
         return;
@@ -4735,9 +4762,10 @@ async function deleteDriver(id) {
 
     updateDriverFilter();
 
+
     alert(
         driver.name +
-        " was deleted successfully."
+        " was deleted successfully!"
     );
 
 }
