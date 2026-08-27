@@ -4150,10 +4150,11 @@ loadDrivers();
 loadExpenses();
 async function addDriver() {
 
+    const input =
+        document.getElementById("newDriverName");
+
     const driverName =
-        document.getElementById("newDriverName")
-        .value
-        .trim();
+        input.value.trim();
 
     if (!driverName) {
         alert("Please enter a driver name.");
@@ -4162,16 +4163,36 @@ async function addDriver() {
 
 
     // =========================
-    // CHECK FOR DUPLICATE DRIVER
+    // CHECK SUPABASE FOR DUPLICATE
     // =========================
 
-    const duplicateDriver = drivers.find(
-        driver =>
-            driver.name.toLowerCase() ===
-            driverName.toLowerCase()
-    );
+    const { data: existingDrivers, error: checkError } =
+        await supabaseClient
+            .from("drivers")
+            .select("id, name")
+            .ilike("name", driverName);
 
-    if (duplicateDriver) {
+
+    if (checkError) {
+
+        console.error(
+            "Error checking driver:",
+            checkError
+        );
+
+        alert(
+            "Could not check existing drivers: " +
+            checkError.message
+        );
+
+        return;
+    }
+
+
+    if (
+        existingDrivers &&
+        existingDrivers.length > 0
+    ) {
 
         alert(
             "A driver with this name already exists."
@@ -4182,7 +4203,7 @@ async function addDriver() {
 
 
     // =========================
-    // ADD DRIVER TO SUPABASE
+    // ADD DRIVER
     // =========================
 
     const { data, error } =
@@ -4204,13 +4225,8 @@ async function addDriver() {
         );
 
 
-        // Handle duplicate name
-        if (
-            error.code === "23505" ||
-            error.message.includes(
-                "drivers_name_key"
-            )
-        ) {
+        // Supabase duplicate-key protection
+        if (error.code === "23505") {
 
             alert(
                 "A driver with this name already exists."
@@ -4239,9 +4255,7 @@ async function addDriver() {
     );
 
 
-    document.getElementById(
-        "newDriverName"
-    ).value = "";
+    input.value = "";
 
 
     await loadDrivers();
