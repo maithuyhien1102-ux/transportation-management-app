@@ -4282,6 +4282,97 @@ function displayDriverList(driversList) {
     });
 
 }
+/* =========================
+   SHOW DRIVER DETAILS
+========================= */
+
+function showDriverDetails(driverName) {
+
+    const driver =
+        drivers.find(driver =>
+            driver.name === driverName
+        );
+
+    if (!driver) {
+        console.error("Driver not found:", driverName);
+        return;
+    }
+
+    const driverLoads =
+        loads.filter(load =>
+            load.driver === driver.name
+        );
+
+    const totalLoads =
+        driverLoads.length;
+
+    const totalRevenue =
+        driverLoads.reduce(
+            (total, load) =>
+                total + Number(load.rate || 0),
+            0
+        );
+
+    const totalDriverPay =
+        driverLoads.reduce(
+            (total, load) =>
+                total + Number(load.driverPay || 0),
+            0
+        );
+
+    const loadProfit =
+        totalRevenue - totalDriverPay;
+
+    const averageRevenue =
+        totalLoads > 0
+            ? totalRevenue / totalLoads
+            : 0;
+
+    const averageDriverPay =
+        totalLoads > 0
+            ? totalDriverPay / totalLoads
+            : 0;
+
+
+    document.getElementById(
+        "selectedDriverName"
+    ).textContent = driver.name;
+
+    document.getElementById(
+        "driverDetailLoads"
+    ).textContent = totalLoads;
+
+    document.getElementById(
+        "driverDetailRevenue"
+    ).textContent =
+        "$" + totalRevenue.toFixed(2);
+
+    document.getElementById(
+        "driverDetailPay"
+    ).textContent =
+        "$" + totalDriverPay.toFixed(2);
+
+    document.getElementById(
+        "driverDetailProfit"
+    ).textContent =
+        "$" + loadProfit.toFixed(2);
+
+    document.getElementById(
+        "driverDetailAvgRevenue"
+    ).textContent =
+        "$" + averageRevenue.toFixed(2);
+
+    document.getElementById(
+        "driverDetailAvgPay"
+    ).textContent =
+        "$" + averageDriverPay.toFixed(2);
+
+
+    document.getElementById(
+        "driverDetails"
+    ).style.display = "block";
+
+}
 async function editDriver(id) {
 
     const driver = drivers.find(
