@@ -4430,7 +4430,21 @@ async function editDriver(id) {
     if (trimmedName === oldName) {
         return;
     }
+    const duplicateDriver = drivers.find(
+    driver =>
+        driver.id !== id &&
+        driver.name.toLowerCase() ===
+        trimmedName.toLowerCase()
+);
 
+if (duplicateDriver) {
+
+    alert(
+        "A driver with this name already exists."
+    );
+
+    return;
+}
     console.log(
         "Renaming driver:",
         oldName,
