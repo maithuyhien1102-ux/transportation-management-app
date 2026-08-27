@@ -683,6 +683,78 @@ tbody tr:hover {
 .driver-table tbody tr:hover {
     background: #f9fafb;
 }
+/* =========================
+   DRIVER DETAILS
+========================= */
+
+.driver-details {
+    margin-top: 25px;
+    padding: 20px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.driver-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.driver-details-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #111827;
+}
+
+.driver-details-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.close-driver-button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: #e5e7eb;
+    color: #374151;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.close-driver-button:hover {
+    background: #d1d5db;
+}
+
+.driver-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.driver-stat-card {
+    padding: 18px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.driver-stat-card span {
+    display: block;
+    margin-bottom: 8px;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.driver-stat-card strong {
+    font-size: 20px;
+    color: #111827;
+}
 /* EDIT BUTTON */
 
 .driver-table button {
