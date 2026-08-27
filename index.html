@@ -2524,6 +2524,124 @@ function updateExpenseDriverDropdown() {
     displayDriverList(drivers);
     updateExpenseDriverDropdown();
 }
+function displayDriverList(driversList) {
+
+    const table =
+        document.getElementById("driverTable");
+
+    if (!table) {
+        console.error("Driver table not found!");
+        return;
+    }
+
+    table.innerHTML = "";
+
+    driversList.forEach(driver => {
+
+        // Get this driver's loads
+        const driverLoads =
+            loads.filter(
+                load => load.driver === driver.name
+            );
+
+
+        // Total loads
+        const loadCount =
+            driverLoads.length;
+
+
+        // Total revenue
+        const revenue =
+            driverLoads.reduce(
+                (total, load) =>
+                    total + Number(load.rate || 0),
+                0
+            );
+
+
+        // Total driver pay
+        const driverPay =
+            driverLoads.reduce(
+                (total, load) =>
+                    total + Number(load.driverPay || 0),
+                0
+            );
+
+
+        // Load profit
+        const loadProfit =
+            revenue - driverPay;
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                <strong>
+                    ${driver.name}
+                </strong>
+            </td>
+
+            <td>
+                ${loadCount}
+            </td>
+
+            <td>
+                $${revenue.toFixed(2)}
+            </td>
+
+            <td>
+                $${driverPay.toFixed(2)}
+            </td>
+
+            <td>
+                <strong>
+                    $${loadProfit.toFixed(2)}
+                </strong>
+            </td>
+
+            <td>
+
+                <button
+                    type="button"
+                    class="driver-action-button"
+                    onclick="showDriverDetails('${driver.name.replace(/'/g, "\\'")}')"
+                >
+                    View
+                </button>
+
+
+                <button
+                    type="button"
+                    class="driver-action-button"
+                    onclick="editDriver(${driver.id})"
+                    style="margin-left: 6px;"
+                >
+                    Edit
+                </button>
+
+
+                <button
+                    type="button"
+                    class="driver-delete-button"
+                    onclick="deleteDriver(${driver.id})"
+                    style="margin-left: 6px;"
+                >
+                    Delete
+                </button>
+
+            </td>
+
+        `;
+
+        table.appendChild(row);
+
+    });
+
+}
 /* =========================
    LOAD EXPENSES
 ========================= */
