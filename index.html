@@ -4422,7 +4422,7 @@ if (duplicateDriver) {
         trimmedName
     );
 
-
+ 
     // =========================
     // UPDATE DRIVER NAME
     // =========================
@@ -4489,8 +4489,8 @@ if (duplicateDriver) {
 
         return;
     }
-
-
+   
+ 
     // =========================
     // UPDATE LOCAL LOAD DATA
     // =========================
@@ -4524,6 +4524,104 @@ if (duplicateDriver) {
     alert(
         "Driver and existing loads updated successfully!"
     );
+}
+/* =========================
+   DELETE DRIVER
+========================= */
+
+async function deleteDriver(id) {
+
+    const driver =
+        drivers.find(
+            item => item.id === id
+        );
+
+    if (!driver) {
+        alert("Driver not found.");
+        return;
+    }
+
+
+    // =========================
+    // CHECK FOR EXISTING LOADS
+    // =========================
+
+    const driverLoads =
+        loads.filter(
+            load => load.driver === driver.name
+        );
+
+
+    if (driverLoads.length > 0) {
+
+        alert(
+            driver.name +
+            " cannot be deleted because they have " +
+            driverLoads.length +
+            " load(s) assigned to them.\n\n" +
+            "Please reassign or remove those loads first."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // CONFIRM DELETE
+    // =========================
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete " +
+            driver.name +
+            "?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    // =========================
+    // DELETE FROM SUPABASE
+    // =========================
+
+    const { error } =
+        await supabaseClient
+            .from("drivers")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(
+            "Error deleting driver:",
+            error
+        );
+
+        alert(
+            "Error deleting driver: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // REFRESH DRIVER LIST
+    // =========================
+
+    await loadDrivers();
+
+    updateDriverFilter();
+
+    alert(
+        driver.name +
+        " was deleted successfully."
+    );
+
 }
 </script>
 
