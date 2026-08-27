@@ -4266,15 +4266,24 @@ function displayDriverList(driversList) {
 
             <td>
 
-                <button
-    type="button"
-    onclick="editDriver(${driver.id})"
-    class="driver-action-button"
->
-    Edit
-</button>
-            </td>
+    <button
+        type="button"
+        class="driver-action-button"
+        onclick="showDriverDetails('${driver.name.replace(/'/g, "\\'")}')"
+    >
+        View
+    </button>
 
+    <button
+        type="button"
+        class="driver-action-button"
+        onclick="editDriver(${driver.id})"
+        style="margin-left: 6px;"
+    >
+        Edit
+    </button>
+
+</td>
         `;
 
         table.appendChild(row);
