@@ -3350,7 +3350,227 @@ function displayLoadList(list) {
 
 }
 
+/* =========================
+   PRINT INVOICE
+========================= */
 
+function printInvoice(id) {
+
+    const load =
+        loads.find(
+            item => item.id === id
+        );
+
+    if (!load) {
+        alert("Load not found.");
+        return;
+    }
+
+    // Invoice date = TODAY
+    const today =
+        new Date();
+
+    const invoiceDate =
+        today.toLocaleDateString(
+            "en-US",
+            {
+                month: "numeric",
+                day: "numeric",
+                year: "2-digit"
+            }
+        );
+
+
+    const invoiceWindow =
+        window.open(
+            "",
+            "_blank",
+            "width=800,height=900"
+        );
+
+
+    if (!invoiceWindow) {
+
+        alert(
+            "Please allow pop-ups for this website to print invoices."
+        );
+
+        return;
+    }
+
+
+    invoiceWindow.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <title>
+                Billing Invoice - ${load.loadNumber}
+            </title>
+
+            <style>
+
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 40px;
+                    color: #111827;
+                }
+
+                .invoice {
+                    max-width: 700px;
+                    margin: auto;
+                }
+
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 25px;
+                }
+
+                .company {
+                    line-height: 1.6;
+                    margin-bottom: 30px;
+                }
+
+                .details {
+                    line-height: 1.8;
+                    margin-bottom: 25px;
+                }
+
+                .amount {
+                    margin-top: 30px;
+                    font-size: 18px;
+                }
+
+                .total-due {
+                    margin-top: 15px;
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+
+                @media print {
+
+                    body {
+                        margin: 0.5in;
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            <div class="invoice">
+
+                <h1>
+                    Billing Invoice
+                </h1>
+
+
+                <div class="company">
+
+                    <strong>
+                        Phong Nguyen
+                    </strong>
+
+                    <br>
+
+                    <strong>
+                        Freedom Life Transport LLC
+                    </strong>
+
+                    <br>
+
+                    8618 Quailmont Dr
+
+                    <br>
+
+                    Missouri City, TX 77489
+
+                    <br>
+
+                    361-688-0097
+
+                </div>
+
+
+                <div class="details">
+
+                    <strong>
+                        Invoice/Reference #:
+                    </strong>
+
+                    ${load.loadNumber}
+
+                    <br>
+
+                    <strong>
+                        Invoice Date:
+                    </strong>
+
+                    ${invoiceDate}
+
+                    <br><br>
+
+                    <strong>
+                        Load Description:
+                    </strong>
+
+                    General Merchandise
+
+                    <br>
+
+                    <strong>
+                        Load #:
+                    </strong>
+
+                    ${load.loadNumber}
+
+                </div>
+
+
+                <div class="amount">
+
+                    <strong>
+                        Total Amount:
+                    </strong>
+
+                    $${Number(load.rate || 0).toFixed(2)}
+
+                </div>
+
+
+                <div class="total-due">
+
+                    Total Due &mdash;&mdash;&mdash;&gt;
+
+                    $${Number(load.rate || 0).toFixed(2)}
+
+                </div>
+
+            </div>
+
+        </body>
+
+        </html>
+
+    `);
+
+
+    invoiceWindow.document.close();
+
+
+    invoiceWindow.focus();
+
+
+    invoiceWindow.print();
+
+}
 /* =========================
    SEARCH + FILTER
 ========================= */
