@@ -3315,7 +3315,15 @@ function displayLoadList(list) {
 
             <td>
 
-                <button
+               <button
+    type="button"
+    class="load-invoice-button"
+    onclick="printInvoice(${load.id})"
+>
+    Invoice
+</button>
+
+<button
     type="button"
     class="load-edit-button"
     onclick="editLoad(${load.id})"
