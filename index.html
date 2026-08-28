@@ -4138,33 +4138,42 @@ function getWeekStart(dateString) {
 
     const date =
         new Date(
-            dateString +
-            "T00:00:00"
+            dateString + "T00:00:00"
         );
-
 
     const day =
         date.getDay();
-
 
     const difference =
         day === 0
             ? -6
             : 1 - day;
 
-
     date.setDate(
-        date.getDate() +
-        difference
+        date.getDate() + difference
     );
 
+    const year =
+        date.getFullYear();
 
-    return date
-        .toISOString()
-        .split("T")[0];
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
 
+    const dayOfMonth =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        dayOfMonth
+    );
 }
-
 
 /* =========================
    WEEKLY SUMMARY
