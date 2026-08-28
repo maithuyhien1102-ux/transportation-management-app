@@ -3384,7 +3384,11 @@ function printInvoice(id) {
         return;
     }
 
-    // Invoice date = TODAY
+
+    // =========================
+    // INVOICE DATE = TODAY
+    // =========================
+
     const today =
         new Date();
 
@@ -3399,30 +3403,22 @@ function printInvoice(id) {
         );
 
 
-    const invoiceWindow =
-    window.open(
-        "",
-        "_blank"
-    );
+    // =========================
+    // CREATE INVOICE CONTENT
+    // =========================
 
-
-    if (!invoiceWindow) {
-
-        alert(
-            "Please allow pop-ups for this website to print invoices."
-        );
-
-        return;
-    }
-
-
-    invoiceWindow.document.write(`
+    const invoiceHTML = `
 
         <!DOCTYPE html>
 
         <html>
 
         <head>
+
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0"
+            >
 
             <title>
                 Billing Invoice - ${load.loadNumber}
@@ -3467,10 +3463,39 @@ function printInvoice(id) {
                     font-weight: bold;
                 }
 
+                .print-button {
+                    display: block;
+                    margin: 0 auto 30px auto;
+                    padding: 10px 18px;
+                    background: #111827;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
+
+                @media (max-width: 600px) {
+
+                    body {
+                        margin: 20px;
+                    }
+
+                    h1 {
+                        font-size: 24px;
+                    }
+
+                }
+
                 @media print {
 
                     body {
                         margin: 0.5in;
+                    }
+
+                    .print-button {
+                        display: none;
                     }
 
                 }
@@ -3481,12 +3506,15 @@ function printInvoice(id) {
 
 
         <body>
+
             <button
-    onclick="window.print()"
-    class="print-button"
->
-    Print Invoice
-</button>
+                onclick="window.print()"
+                class="print-button"
+            >
+                Print Invoice
+            </button>
+
+
             <div class="invoice">
 
                 <h1>
@@ -3581,16 +3609,30 @@ function printInvoice(id) {
 
         </html>
 
-    `);
+    `;
 
 
-    invoiceWindow.document.close();
+    // =========================
+    // OPEN IN NEW TAB
+    // =========================
+
+    const invoiceBlob =
+        new Blob(
+            [invoiceHTML],
+            {
+                type: "text/html"
+            }
+        );
 
 
-    invoiceWindow.focus();
+    const invoiceURL =
+        URL.createObjectURL(
+            invoiceBlob
+        );
 
 
-
+    window.location.href =
+        invoiceURL;
 
 }
 /* =========================
