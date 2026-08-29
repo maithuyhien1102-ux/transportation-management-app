@@ -875,7 +875,116 @@ tbody tr:hover {
 .driver-table button:hover {
     background: #d97706;
 }
+.daily-date-button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #111827;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
 
+.daily-date-button:hover {
+    text-decoration: underline;
+}
+
+.daily-load-details {
+    margin-top: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+
+.daily-load-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.daily-load-details-header h3 {
+    margin: 0 0 5px;
+}
+
+.daily-load-details-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.close-daily-button {
+    border: none;
+    background: #dc2626;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.daily-load-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.daily-load-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.daily-load-main strong {
+    font-size: 14px;
+}
+
+.daily-load-main span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.daily-load-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.daily-load-total {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+
+    .daily-load-item {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .daily-load-info {
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .daily-load-total {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+}
 
 /* MOBILE */
 
@@ -1239,7 +1348,49 @@ tbody tr:hover {
         </table>
 
     </div>
+<!-- DAILY LOAD DETAILS -->
 
+<div
+    id="dailyLoadDetails"
+    class="daily-load-details"
+    style="display:none;"
+>
+
+    <div class="daily-load-details-header">
+
+        <div>
+            <h3 id="dailyLoadDetailsTitle">
+                Daily Load Details
+            </h3>
+
+            <p>
+                Loads completed on this day
+            </p>
+        </div>
+
+        <button
+            type="button"
+            onclick="closeDailyLoadDetails()"
+            class="close-daily-button"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div
+        id="dailyLoadList"
+        class="daily-load-list"
+    ></div>
+
+
+    <div
+        id="dailyLoadTotal"
+        class="daily-load-total"
+    ></div>
+
+</div>
 </div>
  
 <!-- =========================
@@ -1940,14 +2091,19 @@ let expenses = [];
 /* =========================
    DAILY SUMMARY
 ========================= */
-
 function updateDailySummary() {
 
     const summary = {};
 
+
+    // =========================
+    // LOAD DATA
+    // =========================
+
     loads.forEach(load => {
 
         const key = load.date;
+
 
         if (!summary[key]) {
 
@@ -1959,37 +2115,111 @@ function updateDailySummary() {
 
                 revenue: 0,
 
-                invoiced: 0,
+                driverPay: 0,
 
-                paid: 0
+                fuel: 0,
+
+                tolls: 0,
+
+                otherExpenses: 0
 
             };
 
         }
+
 
         summary[key].loads++;
 
         summary[key].revenue +=
             Number(load.rate || 0);
 
-        if (load.invoiceStatus === "Invoiced") {
+        summary[key].driverPay +=
+            Number(load.driverPay || 0);
 
-            summary[key].invoiced +=
-                Number(load.rate || 0);
+    });
+
+
+    // =========================
+    // EXPENSE DATA
+    // =========================
+
+    expenses.forEach(expense => {
+
+        const key = expense.date;
+
+
+        if (!summary[key]) {
+
+            summary[key] = {
+
+                day:
+                    new Date(
+                        key + "T00:00:00"
+                    ).toLocaleDateString(
+                        "en-US",
+                        {
+                            weekday: "long"
+                        }
+                    ),
+
+                loads: 0,
+
+                revenue: 0,
+
+                driverPay: 0,
+
+                fuel: 0,
+
+                tolls: 0,
+
+                otherExpenses: 0
+
+            };
 
         }
 
-        if (load.paymentStatus === "Paid") {
 
-            summary[key].paid +=
-                Number(load.rate || 0);
+        const amount =
+            Number(
+                expense.amount || 0
+            );
+
+
+        if (
+            expense.category === "Fuel"
+        ) {
+
+            summary[key].fuel +=
+                amount;
+
+        }
+        else if (
+            expense.category === "Tolls"
+        ) {
+
+            summary[key].tolls +=
+                amount;
+
+        }
+        else {
+
+            summary[key].otherExpenses +=
+                amount;
 
         }
 
     });
 
+
+    // =========================
+    // FIND TABLE
+    // =========================
+
     const table =
-        document.getElementById("dailySummary");
+        document.getElementById(
+            "dailySummary"
+        );
+
 
     if (!table) {
 
@@ -2001,22 +2231,52 @@ function updateDailySummary() {
 
     }
 
+
     table.innerHTML = "";
+
+
+    // =========================
+    // DISPLAY
+    // =========================
 
     Object.keys(summary)
         .sort()
         .forEach(date => {
 
-            const item = summary[date];
+            const item =
+                summary[date];
+
+
+            const loadProfit =
+                item.revenue -
+                item.driverPay;
+
+
+            const totalExpenses =
+                item.fuel +
+                item.tolls +
+                item.otherExpenses;
+
+
+            const actualNetProfit =
+                loadProfit -
+                totalExpenses;
+
 
             table.innerHTML += `
 
                 <tr>
 
                     <td>
-                        ${item.day}
-                        (${date})
-                    </td>
+    <button
+        type="button"
+        class="daily-date-button"
+        onclick="showDailyLoads('${date}')"
+    >
+        ${item.day}
+        (${date})
+    </button>
+</td>
 
                     <td>
                         ${item.loads}
@@ -2027,11 +2287,29 @@ function updateDailySummary() {
                     </td>
 
                     <td>
-                        $${item.invoiced.toFixed(2)}
+                        $${item.driverPay.toFixed(2)}
                     </td>
 
                     <td>
-                        $${item.paid.toFixed(2)}
+                        $${loadProfit.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.fuel.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.tolls.toFixed(2)}
+                    </td>
+
+                    <td>
+                        $${item.otherExpenses.toFixed(2)}
+                    </td>
+
+                    <td>
+                        <strong>
+                            $${actualNetProfit.toFixed(2)}
+                        </strong>
                     </td>
 
                 </tr>
@@ -2039,6 +2317,223 @@ function updateDailySummary() {
             `;
 
         });
+
+}
+/* =========================
+   SHOW DAILY LOADS
+========================= */
+
+function showDailyLoads(date) {
+
+    const dailyLoads =
+        loads.filter(
+            load => load.date === date
+        );
+
+
+    const details =
+        document.getElementById(
+            "dailyLoadDetails"
+        );
+
+    const list =
+        document.getElementById(
+            "dailyLoadList"
+        );
+
+    const title =
+        document.getElementById(
+            "dailyLoadDetailsTitle"
+        );
+
+    const total =
+        document.getElementById(
+            "dailyLoadTotal"
+        );
+
+
+    if (!details || !list || !title || !total) {
+
+        console.error(
+            "Daily Load Details elements not found."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // GET DAY NAME
+    // =========================
+
+    const dateObject =
+        new Date(
+            date + "T00:00:00"
+        );
+
+
+    const dayName =
+        dateObject.toLocaleDateString(
+            "en-US",
+            {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+            }
+        );
+
+
+    title.textContent =
+        dayName;
+
+
+    // =========================
+    // NO LOADS
+    // =========================
+
+    if (dailyLoads.length === 0) {
+
+        list.innerHTML = `
+            <p>
+                No loads recorded for this date.
+            </p>
+        `;
+
+        total.innerHTML = "";
+
+        details.style.display = "block";
+
+        return;
+    }
+
+
+    // =========================
+    // BUILD LOAD LIST
+    // =========================
+
+    let revenue = 0;
+
+
+    list.innerHTML =
+        dailyLoads.map(load => {
+
+            const rate =
+                Number(
+                    load.rate || 0
+                );
+
+
+            revenue += rate;
+
+
+            return `
+
+                <div class="daily-load-item">
+
+                    <div class="daily-load-main">
+
+                        <strong>
+                            ${load.loadNumber}
+                        </strong>
+
+                        <span>
+                            ${load.pickup || ""}
+                            ${load.pickup ? " → " : ""}
+                            ${load.delivery || ""}
+                        </span>
+
+                    </div>
+
+
+                    <div class="daily-load-info">
+
+                        <span>
+                            $${rate.toFixed(2)}
+                        </span>
+
+                        <span>
+                            ${load.driver || ""}
+                        </span>
+
+                        <span>
+                            ${load.invoiceStatus === "Invoiced"
+                                ? "✔"
+                                : "❌"}
+                        </span>
+
+                        <span>
+                            ${load.paymentStatus === "Paid"
+                                ? "✔"
+                                : "❌"}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+
+    // =========================
+    // TOTAL
+    // =========================
+
+    total.innerHTML = `
+
+        <div>
+            Total Loads:
+            <strong>
+                ${dailyLoads.length}
+            </strong>
+        </div>
+
+        <div>
+            Total Revenue:
+            <strong>
+                $${revenue.toFixed(2)}
+            </strong>
+        </div>
+
+    `;
+
+
+    // =========================
+    // SHOW DETAILS
+    // =========================
+
+    details.style.display =
+        "block";
+
+
+    // Scroll to details
+    details.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* =========================
+   CLOSE DAILY LOAD DETAILS
+========================= */
+
+function closeDailyLoadDetails() {
+
+    const details =
+        document.getElementById(
+            "dailyLoadDetails"
+        );
+
+    if (details) {
+
+        details.style.display =
+            "none";
+
+    }
 
 }
 /* =========================
