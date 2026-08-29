@@ -92,6 +92,20 @@ body {
     background: #f7f8fa;
     color: #111827;
 }
+.daily-load-number-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    cursor: pointer;
+    text-align: left;
+}
+
+.daily-load-number-button:hover {
+    text-decoration: underline;
+}
 /* =========================
    HEADER
 ========================= */
@@ -2432,10 +2446,13 @@ function showDailyLoads(date) {
                 <div class="daily-load-item">
 
                     <div class="daily-load-main">
-
-                        <strong>
-                            ${load.loadNumber}
-                        </strong>
+                      <button
+    type="button"
+    class="daily-load-number-button"
+    onclick="editLoad(${load.id})"
+>
+    ${load.loadNumber}
+</button>
 
                         <span>
                             ${load.pickup || ""}
