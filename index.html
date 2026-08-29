@@ -3372,8 +3372,7 @@ function displayLoadList(list) {
    PRINT INVOICE
 ========================= */
 
-function printInvoice(id) {
-
+async function printInvoice(id) {
     const load =
         loads.find(
             item => item.id === id
@@ -3383,6 +3382,49 @@ function printInvoice(id) {
         alert("Load not found.");
         return;
     }
+   // =========================
+// MARK LOAD AS INVOICED
+// =========================
+
+if (load.invoiceStatus !== "Invoiced") {
+
+    const { data, error } =
+        await supabaseClient
+            .from("loads")
+            .update({
+                invoice_status: "Invoiced"
+            })
+            .eq("id", id)
+            .select();
+
+    if (error) {
+
+        console.error(
+            "Error marking load as invoiced:",
+            error
+        );
+
+        alert(
+            "Invoice could not be marked as Invoiced:\n\n" +
+            error.message
+        );
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        alert(
+            "The invoice status could not be updated."
+        );
+
+        return;
+    }
+
+    // Update local data
+    load.invoiceStatus = "Invoiced";
+
+}
 
 
     // =========================
