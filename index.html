@@ -3613,7 +3613,9 @@ if (load.invoiceStatus !== "Invoiced") {
                         Load Description:
                     </strong>
 
-                    General Merchandise
+                   ${load.loadStatus === "Cancelled"
+    ? "TONU"
+    : "General Merchandise"}
 
                     <br>
 
