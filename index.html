@@ -771,6 +771,21 @@ tbody tr:hover {
 .driver-table tbody tr:hover {
     background: #f9fafb;
 }
+.load-message-button {
+    background: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.load-message-button:hover {
+    opacity: 0.85;
+}
 /* =========================
    DRIVER DETAILS
 ========================= */
@@ -2936,6 +2951,151 @@ load_status:
     updateDailySummary();
 
     updateWeeklySummary();
+
+}
+/* =========================
+   COPY DRIVER MESSAGE
+========================= */
+
+async function copyDriverMessage(id) {
+
+    const load =
+        loads.find(
+            item => item.id === id
+        );
+
+    if (!load) {
+        alert("Load not found.");
+        return;
+    }
+
+
+    // =========================
+    // FORMAT DATE
+    // =========================
+
+    const date =
+        new Date(
+            load.date + "T00:00:00"
+        );
+
+
+    const shortDate =
+        date.toLocaleDateString(
+            "en-US",
+            {
+                month: "numeric",
+                day: "numeric"
+            }
+        );
+
+
+    const fullDate =
+        date.toLocaleDateString(
+            "en-US",
+            {
+                month: "numeric",
+                day: "numeric",
+                year: "2-digit"
+            }
+        );
+
+
+    // =========================
+    // CREATE MESSAGE
+    // =========================
+
+    const message =
+
+`${fullDate} Load Info
+
+Load #1
+
+${load.loadNumber} ${shortDate} - ${load.pickup}
+
+Please arrive on time for pick up 🙏🏽`;
+
+
+    // =========================
+    // COPY MESSAGE
+    // =========================
+
+    try {
+
+        await navigator.clipboard.writeText(
+            message
+        );
+
+
+        alert(
+            "Driver message copied!"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Clipboard error:",
+            error
+        );
+
+
+        // =========================
+        // MOBILE FALLBACK
+        // =========================
+
+        const textarea =
+            document.createElement(
+                "textarea"
+            );
+
+
+        textarea.value =
+            message;
+
+
+        textarea.style.position =
+            "fixed";
+
+        textarea.style.opacity =
+            "0";
+
+
+        document.body.appendChild(
+            textarea
+        );
+
+
+        textarea.focus();
+
+        textarea.select();
+
+
+        try {
+
+            document.execCommand(
+                "copy"
+            );
+
+            alert(
+                "Driver message copied!"
+            );
+
+        } catch (copyError) {
+
+            alert(
+                "Unable to copy automatically.\n\n" +
+                message
+            );
+
+        }
+
+
+        document.body.removeChild(
+            textarea
+        );
+
+    }
 
 }
 /* =========================
