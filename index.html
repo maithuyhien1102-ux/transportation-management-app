@@ -112,6 +112,36 @@ body {
     text-decoration: underline;
 }
 /* =========================
+   APP NAVIGATION
+========================= */
+
+.app-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.app-navigation a {
+    text-decoration: none;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 7px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.app-navigation a:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+/* =========================
    HEADER
 ========================= */
 
@@ -583,6 +613,18 @@ tbody tr:hover {
         grid-template-columns: 1fr;
     }
 
+}
+.app-navigation {
+    justify-content: flex-start;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 12px;
+}
+
+.app-navigation a {
+    flex-shrink: 0;
+    font-size: 13px;
+    padding: 9px 13px;
 }
 /* =========================
    DRIVER MANAGEMENT
