@@ -4085,32 +4085,45 @@ function displayLoadList(list) {
 
             <td>
 
-               <button
-    type="button"
-    class="load-invoice-button"
-    onclick="printInvoice(${load.id})"
->
-    Invoice
-</button>
+    <button
+        type="button"
+        class="load-invoice-button"
+        onclick="printInvoice(${load.id})"
+    >
+        Invoice
+    </button>
 
-<button
-    type="button"
-    class="load-edit-button"
-    onclick="editLoad(${load.id})"
->
-    Edit
-</button>
+    ${
+        load.driver && load.driver.trim() !== ""
+        ? `
+            <button
+                type="button"
+                class="load-message-button"
+                onclick="copyDriverMessage(${load.id})"
+            >
+                Copy Message
+            </button>
+        `
+        : ""
+    }
 
-<button
-    type="button"
-    class="load-delete-button"
-    onclick="deleteLoad(${load.id})"
->
-    Delete
-</button>
+    <button
+        type="button"
+        class="load-edit-button"
+        onclick="editLoad(${load.id})"
+    >
+        Edit
+    </button>
 
-            </td>
+    <button
+        type="button"
+        class="load-delete-button"
+        onclick="deleteLoad(${load.id})"
+    >
+        Delete
+    </button>
 
+</td>
         `;
 
 
