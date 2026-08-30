@@ -1,0 +1,10 @@
+{
+  "name": "Freedom Life Transport",
+  "short_name": "Freedom Life",
+  "description": "Transportation Management System",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#111827",
+  "orientation": "portrait-primary"
+}
