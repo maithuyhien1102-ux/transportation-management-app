@@ -258,6 +258,43 @@ body {
     color: white;
 }
 /* =========================
+   SMALLER LOAD RECORDS CARDS
+========================= */
+
+.dashboard-grid .dashboard-card {
+    padding: 10px;
+}
+
+.dashboard-grid .dashboard-card h3 {
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.dashboard-grid .dashboard-card p {
+    font-size: 16px;
+}
+
+@media (max-width: 700px) {
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 7px;
+    }
+
+    .dashboard-grid .dashboard-card {
+        padding: 9px;
+    }
+
+    .dashboard-grid .dashboard-card h3 {
+        font-size: 9px;
+    }
+
+    .dashboard-grid .dashboard-card p {
+        font-size: 15px;
+    }
+
+}
+/* =========================
    HEADER
 ========================= */
 
