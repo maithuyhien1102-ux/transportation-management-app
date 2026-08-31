@@ -2791,6 +2791,7 @@ async function signInUser() {
     document.getElementById(
         "mainApp"
     ).style.display = "block";
+    await startApp();
 
 }
 
@@ -2857,6 +2858,7 @@ async function checkAuthSession() {
         document.getElementById(
             "mainApp"
         ).style.display = "block";
+         await startApp();
 
     } else {
 
@@ -7359,9 +7361,13 @@ function showWeeklyLoads(weekStart) {
    START APP
 ========================= */
 
-loadData();
-loadDrivers();
-loadExpenses();
+async function startApp() {
+
+    await loadData();
+    await loadDrivers();
+    await loadExpenses();
+
+}
 async function addDriver() {
 
     const input =
