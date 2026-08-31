@@ -5875,7 +5875,13 @@ function updateFilteredSummary(filteredLoads) {
 
 }
 async function deleteLoad(id) {
+const confirmed = confirm(
+    "Are you sure you want to delete this load? This cannot be undone."
+);
 
+if (!confirmed) {
+    return;
+}
     const load =
         loads.find(
             item => item.id === id
