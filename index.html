@@ -13,6 +13,120 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* =========================
+   WEEKLY LOAD DETAILS
+========================= */
+
+.weekly-date-button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #111827;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.weekly-date-button:hover {
+    text-decoration: underline;
+}
+
+.weekly-load-details {
+    margin-top: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+
+.weekly-load-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.weekly-load-details-header h3 {
+    margin: 0 0 5px;
+}
+
+.weekly-load-details-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.close-weekly-button {
+    border: none;
+    background: #dc2626;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.weekly-load-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.weekly-load-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.weekly-load-main strong {
+    font-size: 14px;
+}
+
+.weekly-load-main span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.weekly-load-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.weekly-load-total {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+
+    .weekly-load-item {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .weekly-load-info {
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .weekly-load-total {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+}
+/* =========================
    DRIVER MANAGEMENT
 ========================= */
 
@@ -1594,7 +1708,12 @@ tbody tr:hover {
         </table>
 
     </div>
-
+<div
+    id="weeklyLoadDetails"
+    class="weekly-load-details"
+    style="display:none;"
+>
+</div>
 </div>
 
 <!-- =========================
@@ -5736,8 +5855,14 @@ function updateWeeklySummary() {
                 <tr>
 
                     <td>
-    Week ${getWeekNumber(week)}
-    (${week})
+    <button
+        type="button"
+        class="weekly-date-button"
+        onclick="showWeeklyLoads('${week}')"
+    >
+        Week ${getWeekNumber(week)}
+        (${week})
+    </button>
 </td>
 
                     <td>
@@ -5777,7 +5902,198 @@ function updateWeeklySummary() {
         });
 
 }
+/* =========================
+   SHOW WEEKLY LOADS
+========================= */
 
+function showWeeklyLoads(weekStart) {
+
+    const details =
+        document.getElementById(
+            "weeklyLoadDetails"
+        );
+
+    if (!details) {
+        return;
+    }
+
+
+    // Convert week start to Date
+
+    const startDate =
+        new Date(
+            weekStart + "T00:00:00"
+        );
+
+
+    // Calculate Sunday
+
+    const endDate =
+        new Date(startDate);
+
+    endDate.setDate(
+        endDate.getDate() + 6
+    );
+
+
+    // Convert dates back to YYYY-MM-DD
+
+    const startString =
+        startDate
+            .toISOString()
+            .split("T")[0];
+
+    const endString =
+        endDate
+            .toISOString()
+            .split("T")[0];
+
+
+    // Find all loads in this week
+
+    const weeklyLoads =
+        loads.filter(load => {
+
+            return (
+                load.date >= startString &&
+                load.date <= endString
+            );
+
+        });
+
+
+    // Calculate total
+
+    const totalRevenue =
+        weeklyLoads.reduce(
+            (total, load) =>
+                total +
+                Number(load.rate || 0),
+            0
+        );
+
+
+    // Display
+
+    details.style.display = "block";
+
+
+    details.innerHTML = `
+
+        <div class="weekly-load-details-header">
+
+            <div>
+
+                <h3>
+                    Week ${getWeekNumber(weekStart)}
+                </h3>
+
+                <p>
+                    ${weekStart}
+                    -
+                    ${endString}
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="close-weekly-button"
+                onclick="closeWeeklyLoads()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div>
+
+            ${
+                weeklyLoads.length === 0
+
+                ?
+
+                `<p>
+                    No loads found for this week.
+                </p>`
+
+                :
+
+                weeklyLoads.map(load => `
+
+                    <div class="weekly-load-item">
+
+                        <div class="weekly-load-main">
+
+                            <strong>
+                                ${load.loadNumber}
+                            </strong>
+
+                            <span>
+                                ${load.date}
+                                -
+                                ${load.customer || ""}
+                            </span>
+
+                        </div>
+
+
+                        <div class="weekly-load-info">
+
+                            <span>
+                                ${load.driver || "Unassigned"}
+                            </span>
+
+                            <strong>
+                                $${Number(
+                                    load.rate || 0
+                                ).toFixed(2)}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                `).join("")
+
+            }
+
+        </div>
+
+
+        <div class="weekly-load-total">
+
+            <strong>
+                Total Loads:
+                ${weeklyLoads.length}
+            </strong>
+
+            <strong>
+                Total Revenue:
+                $${totalRevenue.toFixed(2)}
+            </strong>
+
+        </div>
+
+    `;
+
+}
+   function closeWeeklyLoads() {
+
+    const details =
+        document.getElementById(
+            "weeklyLoadDetails"
+        );
+
+    if (details) {
+
+        details.style.display = "none";
+
+    }
+
+}
 /* =========================
    START APP
 ========================= */
