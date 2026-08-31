@@ -7210,13 +7210,8 @@ if (duplicateDriver) {
    DELETE DRIVER
 ========================= */
 async function deleteDriver(id) {
-const confirmed = confirm(
-    "Are you sure you want to delete this? This cannot be undone."
-);
 
-if (!confirmed) {
-    return;
-}
+
     const driver =
         drivers.find(
             item => item.id === id
