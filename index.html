@@ -4290,19 +4290,13 @@ function renderDriverWeeklyLoads() {
         "block";
    details.innerHTML = `
 
-    <div
-        class="driver-weekly-details-header"
-    >
+    <div class="driver-weekly-details-header">
 
         <div>
 
             <h3>
                 ${driverName}
             </h3>
-
-            <p>
-                Driver Payout Summary
-            </p>
 
             <p>
                 Week ${weekNumber}
@@ -4313,7 +4307,6 @@ function renderDriverWeeklyLoads() {
             </p>
 
         </div>
-
 
         <button
             type="button"
@@ -4326,7 +4319,9 @@ function renderDriverWeeklyLoads() {
     </div>
 
 
-    <!-- WEEK NAVIGATION -->
+    <!-- =========================
+         WEEK NAVIGATION
+    ========================= -->
 
     <div class="driver-week-navigation">
 
@@ -4337,14 +4332,12 @@ function renderDriverWeeklyLoads() {
             ← Previous Week
         </button>
 
-
         <button
             type="button"
             onclick="goToCurrentDriverWeek()"
         >
             Current Week
         </button>
-
 
         <button
             type="button"
@@ -4356,7 +4349,14 @@ function renderDriverWeeklyLoads() {
     </div>
 
 
-    <!-- PAYOUT TOTALS -->
+    <!-- =========================
+         PAYOUT SUMMARY
+    ========================= -->
+
+    <h4 class="driver-weekly-load-title">
+        Driver Payout Summary
+    </h4>
+
 
     <div class="driver-stats">
 
@@ -4388,18 +4388,7 @@ function renderDriverWeeklyLoads() {
     </div>
 
 
-    <!-- LOAD PAYOUT LIST -->
-
-    <h4
-        class="driver-weekly-load-title"
-    >
-        Week ${weekNumber} Payout Details
-    </h4>
-
-
-    <div
-        class="driver-weekly-load-list"
-    >
+    <div class="driver-weekly-load-list">
 
         ${
             driverLoads.length === 0
@@ -4416,7 +4405,7 @@ function renderDriverWeeklyLoads() {
 
             :
 
-            driverLoads
+            [...driverLoads]
                 .sort(
                     (a, b) =>
                         new Date(a.date + "T00:00:00")
@@ -4425,9 +4414,7 @@ function renderDriverWeeklyLoads() {
                 )
                 .map(load => `
 
-                    <div
-                        class="driver-weekly-load"
-                    >
+                    <div class="driver-weekly-load">
 
                         <div>
 
@@ -4458,6 +4445,138 @@ function renderDriverWeeklyLoads() {
                                     load.driverPay || 0
                                 ).toFixed(2)}
                             </strong>
+
+                        </div>
+
+                    </div>
+
+                `)
+                .join("")
+        }
+
+    </div>
+
+
+    <!-- =========================
+         WEEKLY LOAD ACTIVITY
+    ========================= -->
+
+    <h4 class="driver-weekly-load-title">
+        Weekly Load Activity
+    </h4>
+
+
+    <div class="driver-stats">
+
+        <div class="driver-stat-card">
+
+            <span>
+                Revenue
+            </span>
+
+            <strong>
+                $${totalRevenue.toFixed(2)}
+            </strong>
+
+        </div>
+
+
+        <div class="driver-stat-card">
+
+            <span>
+                Driver Pay
+            </span>
+
+            <strong>
+                $${totalDriverPay.toFixed(2)}
+            </strong>
+
+        </div>
+
+
+        <div class="driver-stat-card">
+
+            <span>
+                Load Profit
+            </span>
+
+            <strong>
+                $${totalProfit.toFixed(2)}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="driver-weekly-load-list">
+
+        ${
+            driverLoads.length === 0
+
+            ?
+
+            `
+            <p class="no-driver-loads">
+                No weekly activity found.
+            </p>
+            `
+
+            :
+
+            [...driverLoads]
+                .sort(
+                    (a, b) =>
+                        new Date(a.date + "T00:00:00")
+                        -
+                        new Date(b.date + "T00:00:00")
+                )
+                .map(load => `
+
+                    <div class="driver-weekly-load">
+
+                        <div>
+
+                            <strong>
+                                ${load.loadNumber}
+                            </strong>
+
+                            <span>
+                                ${load.date || ""}
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                ${load.customer || ""}
+                            </strong>
+
+                            <span>
+                                ${load.pickup || ""}
+                                ${load.pickup ? " → " : ""}
+                                ${load.delivery || ""}
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                $${Number(
+                                    load.rate || 0
+                                ).toFixed(2)}
+                            </strong>
+
+                            <span>
+                                Driver Pay:
+                                $${Number(
+                                    load.driverPay || 0
+                                ).toFixed(2)}
+                            </span>
 
                         </div>
 
