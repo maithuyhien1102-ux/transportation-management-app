@@ -7367,11 +7367,6 @@ async function startApp() {
         data: { session }
     } = await supabaseClient.auth.getSession();
 
-    console.log(
-        "Current auth session:",
-        session
-    );
-
     await loadData();
     await loadDrivers();
     await loadExpenses();
