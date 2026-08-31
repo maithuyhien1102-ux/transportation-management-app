@@ -1,4 +1,4 @@
-const CACHE_NAME = "freedom-life-transport-v3";
+const CACHE_NAME = "freedom-life-transport-v4";
 
 const FILES_TO_CACHE = [
     "./",
