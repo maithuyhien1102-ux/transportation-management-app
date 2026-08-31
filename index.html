@@ -2403,11 +2403,11 @@ tbody tr:hover {
     <th>Load #</th>
     <th>Customer</th>
     <th>Pickup</th>
+    <th>Driver</th>
     <th>Delivery</th>
     <th>Day</th>
     <th>Date</th>
     <th>Rate</th>
-    <th>Driver</th>
     <th>Driver Pay</th>
     <th>Load Status</th>
     <th>Invoice</th>
@@ -5142,40 +5142,87 @@ function displayLoadList(list) {
         document.getElementById("loadTable");
 
     table.innerHTML = "";
+const sortedList = [...list].sort((a, b) => {
 
-    const sortedList = [...list].sort((a, b) => {
+    // =========================
+    // SORT BY DATE FIRST
+    // =========================
 
-        function getPickupTime(pickup) {
+    const dateA =
+        new Date(a.date + "T00:00:00");
 
-            if (!pickup || pickup.trim() === "") {
-                return -1;
-            }
+    const dateB =
+        new Date(b.date + "T00:00:00");
 
-            const match = pickup
-                .toUpperCase()
-                .match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/);
 
-            if (!match) {
-                return -1;
-            }
+    if (dateA - dateB !== 0) {
+        return dateA - dateB;
+    }
 
-            let hour = parseInt(match[1]);
-            const minute = parseInt(match[2] || "0");
-            const period = match[3];
 
-            if (period === "PM" && hour !== 12) {
-                hour += 12;
-            }
+    // =========================
+    // THEN SORT BY PICKUP TIME
+    // =========================
 
-            if (period === "AM" && hour === 12) {
-                hour = 0;
-            }
+    function getPickupTime(pickup) {
 
-            return hour * 60 + minute;
+        // No pickup time goes first
+        if (!pickup || pickup.trim() === "") {
+            return -1;
         }
 
-        return getPickupTime(a.pickup) - getPickupTime(b.pickup);
-    });
+        const match =
+            pickup
+                .toUpperCase()
+                .match(
+                    /(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/
+                );
+
+        // If no recognizable time,
+        // treat it like no pickup time
+        if (!match) {
+            return -1;
+        }
+
+        let hour =
+            parseInt(match[1]);
+
+        const minute =
+            parseInt(match[2] || "0");
+
+        const period =
+            match[3];
+
+
+        if (
+            period === "PM" &&
+            hour !== 12
+        ) {
+            hour += 12;
+        }
+
+
+        if (
+            period === "AM" &&
+            hour === 12
+        ) {
+            hour = 0;
+        }
+
+
+        return (
+            hour * 60 +
+            minute
+        );
+    }
+
+
+    return (
+        getPickupTime(a.pickup) -
+        getPickupTime(b.pickup)
+    );
+
+});
 
 
     sortedList.forEach(load => {
@@ -5186,23 +5233,23 @@ function displayLoadList(list) {
 
         row.innerHTML = `
 
-    <td>${load.loadNumber}</td>
+   <td>${load.loadNumber}</td>
 
-    <td>${load.customer}</td>
+<td>${load.customer}</td>
 
-    <td>${load.pickup}</td>
+<td>${load.pickup}</td>
 
-    <td>${load.delivery}</td>
+<td>${load.driver || "Unassigned"}</td>
 
-    <td>${load.day}</td>
+<td>${load.delivery}</td>
 
-    <td>${load.date}</td>
+<td>${load.day}</td>
+
+<td>${load.date}</td>
 
     <td>
         $${Number(load.rate || 0).toFixed(2)}
     </td>
-
-    <td>${load.driver || "Unassigned"}</td>
 
     <td>
         $${Number(load.driverPay || 0).toFixed(2)}
