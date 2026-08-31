@@ -5138,6 +5138,11 @@ function displayLoads() {
 
 function displayLoadList(list) {
 
+    const table =
+        document.getElementById("loadTable");
+
+    table.innerHTML = "";
+
     const sortedList = [...list].sort((a, b) => {
 
         function getPickupTime(pickup) {
