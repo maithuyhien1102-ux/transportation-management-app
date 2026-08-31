@@ -2173,22 +2173,20 @@ tbody tr:hover {
             <thead>
 
                 <tr>
-
-                    <th>Load #</th>
-                    <th>Date</th>
-                    <th>Day</th>
-                    <th>Customer</th>
-                    <th>Driver</th>
-                    <th>Pickup</th>
-                    <th>Delivery</th>
-                    <th>Rate</th>
-                    <th>Driver Pay</th>
-                    <th>Load Status</th>
-                    <th>Invoice</th>
-                    <th>Payment</th>
-                    <th>Actions</th>
-
-                </tr>
+    <th>Load #</th>
+    <th>Customer</th>
+    <th>Pickup</th>
+    <th>Delivery</th>
+    <th>Day</th>
+    <th>Date</th>
+    <th>Rate</th>
+    <th>Driver</th>
+    <th>Driver Pay</th>
+    <th>Load Status</th>
+    <th>Invoice</th>
+    <th>Payment</th>
+    <th>Actions</th>
+</tr>
 
             </thead>
 
@@ -4388,94 +4386,89 @@ function displayLoadList(list) {
 
         row.innerHTML = `
 
-            <td>${load.loadNumber}</td>
+    <td>${load.loadNumber}</td>
 
-            <td>${load.date}</td>
+    <td>${load.customer}</td>
 
-            <td>${load.day}</td>
+    <td>${load.pickup}</td>
 
-            <td>${load.customer}</td>
+    <td>${load.delivery}</td>
 
-            <td>${load.driver}</td>
+    <td>${load.day}</td>
 
-            <td>${load.pickup}</td>
+    <td>${load.date}</td>
 
-            <td>${load.delivery}</td>
+    <td>
+        $${Number(load.rate || 0).toFixed(2)}
+    </td>
 
-            <td>
-    $${load.rate.toFixed(2)}
-</td>
+    <td>${load.driver || "Unassigned"}</td>
 
-<td>
-    $${load.driverPay.toFixed(2)}
-</td>
+    <td>
+        $${Number(load.driverPay || 0).toFixed(2)}
+    </td>
 
-<td>
-    ${load.loadStatus}
-</td>
+    <td>
+        ${load.loadStatus}
+    </td>
 
-            <td class="${
-                load.invoiceStatus === "Invoiced"
-                    ? "status-invoiced"
-                    : "status-not"
-            }">
+    <td class="${
+        load.invoiceStatus === "Invoiced"
+            ? "status-invoiced"
+            : "status-not"
+    }">
 
-                ${load.invoiceStatus}
+        ${load.invoiceStatus}
 
-            </td>
+    </td>
 
-            <td class="${
-                load.paymentStatus === "Paid"
-                    ? "status-paid"
-                    : "status-unpaid"
-            }">
+    <td class="${
+        load.paymentStatus === "Paid"
+            ? "status-paid"
+            : "status-unpaid"
+    }">
 
-                ${load.paymentStatus}
+        ${load.paymentStatus}
 
-            </td>
+    </td>
 
-            <td>
+    <td>
 
-    <button
-        type="button"
-        class="load-invoice-button"
-        onclick="printInvoice(${load.id})"
-    >
-        Invoice
-    </button>
+        <button
+            type="button"
+            class="load-invoice-button"
+            onclick="printInvoice(${load.id})"
+        >
+            Invoice
+        </button>
 
-    ${
-        load.driver && load.driver.trim() !== ""
-        ? `
-            <button
-                type="button"
-                class="load-message-button"
-                onclick="copyDriverMessage(${load.id})"
-            >
-                Copy Message
-            </button>
-        `
-        : ""
-    }
+        <button
+            type="button"
+            class="load-message-button"
+            onclick="copyLoadMessage(${load.id})"
+        >
+            Message
+        </button>
 
-    <button
-        type="button"
-        class="load-edit-button"
-        onclick="editLoad(${load.id})"
-    >
-        Edit
-    </button>
+        <button
+            type="button"
+            class="load-edit-button"
+            onclick="editLoad(${load.id})"
+        >
+            Edit
+        </button>
 
-    <button
-        type="button"
-        class="load-delete-button"
-        onclick="deleteLoad(${load.id})"
-    >
-        Delete
-    </button>
+        <button
+            type="button"
+            class="load-delete-button"
+            onclick="deleteLoad(${load.id})"
+        >
+            Delete
+        </button>
 
-</td>
-        `;
+    </td>
+
+`;
 
 
         table.appendChild(row);
