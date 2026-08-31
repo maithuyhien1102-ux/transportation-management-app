@@ -2723,7 +2723,158 @@ const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+// =========================
+// AUTHENTICATION
+// =========================
 
+async function signInUser() {
+
+    const email =
+        document.getElementById("loginEmail")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("loginPassword")
+        .value;
+
+    const errorMessage =
+        document.getElementById("loginError");
+
+
+    errorMessage.style.display = "none";
+    errorMessage.textContent = "";
+
+
+    if (!email || !password) {
+
+        errorMessage.textContent =
+            "Please enter your email and password.";
+
+        errorMessage.style.display =
+            "block";
+
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth
+            .signInWithPassword({
+                email: email,
+                password: password
+            });
+
+
+    if (error) {
+
+        errorMessage.textContent =
+            error.message;
+
+        errorMessage.style.display =
+            "block";
+
+        return;
+    }
+
+
+    // LOGIN SUCCESSFUL
+
+    document.getElementById(
+        "loginScreen"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mainApp"
+    ).style.display = "block";
+
+}
+
+
+async function signOutUser() {
+
+    const { error } =
+        await supabaseClient.auth.signOut();
+
+
+    if (error) {
+
+        alert(
+            "Unable to sign out: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "mainApp"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "loginScreen"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "loginEmail"
+    ).value = "";
+
+
+    document.getElementById(
+        "loginPassword"
+    ).value = "";
+
+}
+
+
+// =========================
+// CHECK EXISTING LOGIN
+// =========================
+
+async function checkAuthSession() {
+
+    const {
+        data: { session }
+    } =
+        await supabaseClient.auth
+            .getSession();
+
+
+    if (session) {
+
+        document.getElementById(
+            "loginScreen"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "mainApp"
+        ).style.display = "block";
+
+    } else {
+
+        document.getElementById(
+            "loginScreen"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "mainApp"
+        ).style.display = "none";
+
+    }
+
+}
+
+
+checkAuthSession();
 let loads = [];
 let drivers = [];
 let expenses = [];
