@@ -2847,55 +2847,42 @@ function showDailyLoads(date) {
         )
         .sort((a, b) => {
 
-            function getPickupMinutes(pickup) {
+    function getPickupTimeValue(pickup) {
 
-                if (!pickup || !pickup.trim()) {
-                    return -1;
-                }
+        if (!pickup || pickup.trim() === "") {
+            return -1;
+        }
 
-                const match =
-                    pickup.match(
-                        /(\d{1,2}):?(\d{2})?\s*(AM|PM)/i
-                    );
+        const text = pickup.toUpperCase();
 
-                if (!match) {
-                    return -1;
-                }
+        const match = text.match(
+            /(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/
+        );
 
-                let hour =
-                    parseInt(match[1]);
+        if (!match) {
+            return -1;
+        }
 
-                const minute =
-                    parseInt(match[2] || "0");
+        let hour = parseInt(match[1]);
+        const minute = parseInt(match[2] || "0");
+        const period = match[3];
 
-                const period =
-                    match[3].toUpperCase();
+        if (period === "PM" && hour !== 12) {
+            hour += 12;
+        }
 
-                if (
-                    period === "PM" &&
-                    hour !== 12
-                ) {
-                    hour += 12;
-                }
+        if (period === "AM" && hour === 12) {
+            hour = 0;
+        }
 
-                if (
-                    period === "AM" &&
-                    hour === 12
-                ) {
-                    hour = 0;
-                }
+        return hour * 60 + minute;
+    }
 
-                return (
-                    hour * 60 +
-                    minute
-                );
-            }
+    const timeA = getPickupTimeValue(a.pickup);
+    const timeB = getPickupTimeValue(b.pickup);
 
-            return (
-                getPickupMinutes(a.pickup) -
-                getPickupMinutes(b.pickup)
-            );
-        });
+    return timeA - timeB;
+});
 
 
     const dailyExpenses =
