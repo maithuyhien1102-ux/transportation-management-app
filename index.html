@@ -2840,10 +2840,62 @@ function updateDailySummary() {
 
 function showDailyLoads(date) {
 
-    const dailyLoads =
-        loads.filter(
+   const dailyLoads =
+    loads
+        .filter(
             load => load.date === date
-        );
+        )
+        .sort((a, b) => {
+
+            function getPickupMinutes(pickup) {
+
+                if (!pickup || !pickup.trim()) {
+                    return -1;
+                }
+
+                const match =
+                    pickup.match(
+                        /(\d{1,2}):?(\d{2})?\s*(AM|PM)/i
+                    );
+
+                if (!match) {
+                    return -1;
+                }
+
+                let hour =
+                    parseInt(match[1]);
+
+                const minute =
+                    parseInt(match[2] || "0");
+
+                const period =
+                    match[3].toUpperCase();
+
+                if (
+                    period === "PM" &&
+                    hour !== 12
+                ) {
+                    hour += 12;
+                }
+
+                if (
+                    period === "AM" &&
+                    hour === 12
+                ) {
+                    hour = 0;
+                }
+
+                return (
+                    hour * 60 +
+                    minute
+                );
+            }
+
+            return (
+                getPickupMinutes(a.pickup) -
+                getPickupMinutes(b.pickup)
+            );
+        });
 
 
     const dailyExpenses =
