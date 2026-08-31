@@ -1319,6 +1319,101 @@ tbody tr:hover {
     }
 
 }
+/* =========================
+   CLICKABLE DRIVER NAME
+========================= */
+
+.driver-name-button {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    color: #111827;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+}
+
+.driver-name-button:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+
+/* =========================
+   DRIVER WEEKLY DETAILS
+========================= */
+
+.driver-weekly-details {
+    margin-top: 25px;
+    padding: 20px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.driver-weekly-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.driver-weekly-details-header h3 {
+    margin: 0 0 5px;
+    font-size: 20px;
+}
+
+.driver-weekly-details-header p {
+    margin: 3px 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.driver-weekly-load-title {
+    margin-top: 25px;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.driver-weekly-load {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.driver-weekly-load > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.driver-weekly-load span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.no-driver-loads {
+    color: #6b7280;
+    padding: 15px 0;
+}
+
+@media (max-width: 700px) {
+
+    .driver-weekly-load {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .driver-weekly-details {
+        padding: 15px;
+    }
+
+}
 </style>
 
 
@@ -1655,6 +1750,11 @@ tbody tr:hover {
 </table>
 
     </div>
+   <div
+    id="driverWeeklyDetails"
+    class="driver-weekly-details"
+    style="display:none;"
+></div>
 
 </div>
 <!-- =========================
@@ -3840,10 +3940,14 @@ function displayDriverList(driversList) {
         row.innerHTML = `
 
             <td>
-                <strong>
-                    ${driver.name}
-                </strong>
-            </td>
+    <button
+        type="button"
+        class="driver-name-button"
+        onclick="showDriverWeeklyLoads('${driver.name.replace(/'/g, "\\'")}')"
+    >
+        ${driver.name}
+    </button>
+</td>
 
             <td>
                 ${loadCount}
@@ -3900,6 +4004,294 @@ function displayDriverList(driversList) {
         table.appendChild(row);
 
     });
+
+}
+function showDriverWeeklyLoads(driverName) {
+
+    const details =
+        document.getElementById("driverWeeklyDetails");
+
+    if (!details) {
+        console.error("Driver weekly details container not found.");
+        return;
+    }
+
+    // =========================
+    // GET CURRENT WEEK
+    // MONDAY - SUNDAY
+    // =========================
+
+    const today = new Date();
+
+    const day = today.getDay();
+
+    const monday = new Date(today);
+
+    const daysFromMonday =
+        day === 0 ? 6 : day - 1;
+
+    monday.setDate(
+        today.getDate() - daysFromMonday
+    );
+
+    monday.setHours(0, 0, 0, 0);
+
+
+    const sunday = new Date(monday);
+
+    sunday.setDate(
+        monday.getDate() + 6
+    );
+
+    sunday.setHours(23, 59, 59, 999);
+
+
+    // =========================
+    // FILTER DRIVER LOADS
+    // =========================
+
+    const driverLoads =
+        loads.filter(load => {
+
+            if (load.driver !== driverName) {
+                return false;
+            }
+
+            const loadDate =
+                new Date(load.date + "T00:00:00");
+
+            return (
+                loadDate >= monday &&
+                loadDate <= sunday
+            );
+
+        });
+
+
+    // =========================
+    // TOTALS
+    // =========================
+
+    const totalRevenue =
+        driverLoads.reduce(
+            (total, load) =>
+                total + Number(load.rate || 0),
+            0
+        );
+
+    const totalDriverPay =
+        driverLoads.reduce(
+            (total, load) =>
+                total + Number(load.driverPay || 0),
+            0
+        );
+
+    const totalProfit =
+        totalRevenue -
+        totalDriverPay;
+
+
+    // =========================
+    // FORMAT DATES
+    // =========================
+
+    const formatDate =
+        date =>
+            date.toLocaleDateString(
+                "en-US",
+                {
+                    month: "numeric",
+                    day: "numeric",
+                    year: "numeric"
+                }
+            );
+
+
+    // =========================
+    // DISPLAY
+    // =========================
+
+    details.style.display = "block";
+
+    details.innerHTML = `
+
+        <div class="driver-weekly-details-header">
+
+            <div>
+
+                <h3>
+                    ${driverName}
+                </h3>
+
+                <p>
+                    Weekly Load Activity
+                </p>
+
+                <p>
+                    ${formatDate(monday)}
+                    -
+                    ${formatDate(sunday)}
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="close-driver-button"
+                onclick="closeDriverWeeklyDetails()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="driver-stats">
+
+            <div class="driver-stat-card">
+
+                <span>Total Loads</span>
+
+                <strong>
+                    ${driverLoads.length}
+                </strong>
+
+            </div>
+
+
+            <div class="driver-stat-card">
+
+                <span>Revenue</span>
+
+                <strong>
+                    $${totalRevenue.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="driver-stat-card">
+
+                <span>Driver Pay</span>
+
+                <strong>
+                    $${totalDriverPay.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="driver-stat-card">
+
+                <span>Load Profit</span>
+
+                <strong>
+                    $${totalProfit.toFixed(2)}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <h4 class="driver-weekly-load-title">
+            Loads This Week
+        </h4>
+
+
+        <div class="driver-weekly-load-list">
+
+            ${
+                driverLoads.length === 0
+
+                ?
+
+                `<p class="no-driver-loads">
+                    No loads found for ${driverName}
+                    this week.
+                </p>`
+
+                :
+
+                driverLoads
+                    .sort(
+                        (a, b) =>
+                            new Date(a.date) -
+                            new Date(b.date)
+                    )
+                    .map(load => `
+
+                        <div class="driver-weekly-load">
+
+                            <div>
+
+                                <strong>
+                                    ${load.loadNumber}
+                                </strong>
+
+                                <span>
+                                    ${load.date}
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    ${load.customer || ""}
+                                </span>
+
+                                <span>
+                                    ${load.pickup || ""}
+                                    →
+                                    ${load.delivery || ""}
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    $${Number(load.rate || 0).toFixed(2)}
+                                </strong>
+
+                                <span>
+                                    Driver Pay:
+                                    $${Number(load.driverPay || 0).toFixed(2)}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    `)
+                    .join("")
+            }
+
+        </div>
+
+    `;
+
+    // Scroll to the details
+    details.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+function closeDriverWeeklyDetails() {
+
+    const details =
+        document.getElementById(
+            "driverWeeklyDetails"
+        );
+
+    if (details) {
+        details.style.display = "none";
+    }
 
 }
 /* =========================
