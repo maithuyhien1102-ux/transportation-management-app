@@ -4213,12 +4213,6 @@ function renderDriverWeeklyLoads() {
             0
         );
 
-
-    const totalProfit =
-        totalRevenue -
-        totalDriverPay;
-
-
     // =========================
     // DATE FORMAT
     // =========================
@@ -4294,242 +4288,191 @@ function renderDriverWeeklyLoads() {
 
     details.style.display =
         "block";
+   details.innerHTML = `
 
+    <div
+        class="driver-weekly-details-header"
+    >
 
-    details.innerHTML = `
+        <div>
 
-        <div
-            class="driver-weekly-details-header"
-        >
+            <h3>
+                ${driverName}
+            </h3>
 
-            <div>
+            <p>
+                Driver Payout Summary
+            </p>
 
-                <h3>
-                    ${driverName}
-                </h3>
-
-                <p>
-                    Weekly Load Activity
-                </p>
-
-                <p>
-                    Week ${weekNumber}
-                    —
-                    ${formatDate(monday)}
-                    -
-                    ${formatDate(sunday)}
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="close-driver-button"
-                onclick="closeDriverWeeklyDetails()"
-            >
-                ×
-            </button>
+            <p>
+                Week ${weekNumber}
+                —
+                ${formatDate(monday)}
+                -
+                ${formatDate(sunday)}
+            </p>
 
         </div>
 
 
-        <!-- =========================
-             WEEK NAVIGATION
-        ========================= -->
+        <button
+            type="button"
+            class="close-driver-button"
+            onclick="closeDriverWeeklyDetails()"
+        >
+            ×
+        </button>
 
-        <div class="driver-week-navigation">
-
-            <button
-                type="button"
-                onclick="changeDriverWeek(-1)"
-            >
-                ← Previous Week
-            </button>
+    </div>
 
 
-            <button
-                type="button"
-                onclick="goToCurrentDriverWeek()"
-            >
-                Current Week
-            </button>
+    <!-- WEEK NAVIGATION -->
+
+    <div class="driver-week-navigation">
+
+        <button
+            type="button"
+            onclick="changeDriverWeek(-1)"
+        >
+            ← Previous Week
+        </button>
 
 
-            <button
-                type="button"
-                onclick="changeDriverWeek(1)"
-            >
-                Next Week →
-            </button>
+        <button
+            type="button"
+            onclick="goToCurrentDriverWeek()"
+        >
+            Current Week
+        </button>
+
+
+        <button
+            type="button"
+            onclick="changeDriverWeek(1)"
+        >
+            Next Week →
+        </button>
+
+    </div>
+
+
+    <!-- PAYOUT TOTALS -->
+
+    <div class="driver-stats">
+
+        <div class="driver-stat-card">
+
+            <span>
+                Total Loads
+            </span>
+
+            <strong>
+                ${driverLoads.length}
+            </strong>
 
         </div>
 
 
-        <!-- =========================
-             DRIVER STATS
-        ========================= -->
+        <div class="driver-stat-card">
 
-        <div class="driver-stats">
+            <span>
+                Total Payout
+            </span>
 
-            <div class="driver-stat-card">
-
-                <span>
-                    Total Loads
-                </span>
-
-                <strong>
-                    ${driverLoads.length}
-                </strong>
-
-            </div>
-
-
-            <div class="driver-stat-card">
-
-                <span>
-                    Revenue
-                </span>
-
-                <strong>
-                    $${totalRevenue.toFixed(2)}
-                </strong>
-
-            </div>
-
-
-            <div class="driver-stat-card">
-
-                <span>
-                    Driver Pay
-                </span>
-
-                <strong>
-                    $${totalDriverPay.toFixed(2)}
-                </strong>
-
-            </div>
-
-
-            <div class="driver-stat-card">
-
-                <span>
-                    Load Profit
-                </span>
-
-                <strong>
-                    $${totalProfit.toFixed(2)}
-                </strong>
-
-            </div>
+            <strong>
+                $${totalDriverPay.toFixed(2)}
+            </strong>
 
         </div>
 
-
-        <!-- =========================
-             LOADS
-        ========================= -->
-
-        <h4
-            class="driver-weekly-load-title"
-        >
-            Loads This Week
-        </h4>
+    </div>
 
 
-        <div
-            class="driver-weekly-load-list"
-        >
+    <!-- LOAD PAYOUT LIST -->
 
-            ${
-                driverLoads.length === 0
-
-                ?
-
-                `
-                <p class="no-driver-loads">
-                    No loads found for
-                    ${driverName}
-                    this week.
-                </p>
-                `
-
-                :
-
-                driverLoads
-                    .sort(
-                        (a, b) =>
-                            new Date(a.date)
-                            -
-                            new Date(b.date)
-                    )
-                    .map(load => `
-
-                        <div
-                            class="driver-weekly-load"
-                        >
-
-                            <div>
-
-                                <strong>
-                                    ${load.loadNumber}
-                                </strong>
-
-                                <span>
-                                    ${load.date}
-                                </span>
-
-                            </div>
+    <h4
+        class="driver-weekly-load-title"
+    >
+        Week ${weekNumber} Payout Details
+    </h4>
 
 
-                            <div>
+    <div
+        class="driver-weekly-load-list"
+    >
 
-                                <span>
-                                    ${load.customer || ""}
-                                </span>
+        ${
+            driverLoads.length === 0
 
-                                <span>
-                                    ${load.pickup || ""}
-                                    →
-                                    ${load.delivery || ""}
-                                </span>
+            ?
 
-                            </div>
+            `
+            <p class="no-driver-loads">
+                No loads found for
+                ${driverName}
+                this week.
+            </p>
+            `
 
+            :
 
-                            <div>
+            driverLoads
+                .sort(
+                    (a, b) =>
+                        new Date(a.date + "T00:00:00")
+                        -
+                        new Date(b.date + "T00:00:00")
+                )
+                .map(load => `
 
-                                <strong>
-                                    $${Number(
-                                        load.rate || 0
-                                    ).toFixed(2)}
-                                </strong>
+                    <div
+                        class="driver-weekly-load"
+                    >
 
-                                <span>
-                                    Driver Pay:
-                                    $${Number(
-                                        load.driverPay || 0
-                                    ).toFixed(2)}
-                                </span>
+                        <div>
 
-                            </div>
+                            <strong>
+                                ${load.loadNumber}
+                            </strong>
+
+                            <span>
+                                ${load.customer || ""}
+                            </span>
 
                         </div>
 
-                    `)
-                    .join("")
-            }
 
-        </div>
+                        <div>
 
-    `;
+                            <span>
+                                ${load.date || ""}
+                            </span>
+
+                        </div>
 
 
-    details.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+                        <div>
 
+                            <strong>
+                                $${Number(
+                                    load.driverPay || 0
+                                ).toFixed(2)}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                `)
+                .join("")
+        }
+
+    </div>
+
+`;
+
+
+    
 }
 
 
