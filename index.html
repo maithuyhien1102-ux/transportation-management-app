@@ -5140,41 +5140,40 @@ function displayLoadList(list) {
 
     const sortedList = [...list].sort((a, b) => {
 
-    function getPickupTime(pickup) {
+        function getPickupTime(pickup) {
 
-        if (!pickup || pickup.trim() === "") {
-            return -1;
+            if (!pickup || pickup.trim() === "") {
+                return -1;
+            }
+
+            const match = pickup
+                .toUpperCase()
+                .match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/);
+
+            if (!match) {
+                return -1;
+            }
+
+            let hour = parseInt(match[1]);
+            const minute = parseInt(match[2] || "0");
+            const period = match[3];
+
+            if (period === "PM" && hour !== 12) {
+                hour += 12;
+            }
+
+            if (period === "AM" && hour === 12) {
+                hour = 0;
+            }
+
+            return hour * 60 + minute;
         }
 
-        const match = pickup
-            .toUpperCase()
-            .match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/);
-
-        if (!match) {
-            return -1;
-        }
-
-        let hour = parseInt(match[1]);
-        const minute = parseInt(match[2] || "0");
-        const period = match[3];
-
-        if (period === "PM" && hour !== 12) {
-            hour += 12;
-        }
-
-        if (period === "AM" && hour === 12) {
-            hour = 0;
-        }
-
-        return hour * 60 + minute;
-    }
-
-    return getPickupTime(a.pickup) - getPickupTime(b.pickup);
-});
+        return getPickupTime(a.pickup) - getPickupTime(b.pickup);
+    });
 
 
-sortedList.forEach(load => {
-
+    sortedList.forEach(load => {
 
         const row =
             document.createElement("tr");
@@ -5239,12 +5238,12 @@ sortedList.forEach(load => {
         </button>
 
         <button
-    type="button"
-    class="load-message-button"
-    onclick="copyDriverMessage(${load.id})"
->
-    Copy Message
-</button>
+            type="button"
+            class="load-message-button"
+            onclick="copyDriverMessage(${load.id})"
+        >
+            Copy Message
+        </button>
 
         <button
             type="button"
