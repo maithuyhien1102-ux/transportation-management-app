@@ -15,6 +15,78 @@
 <meta name="theme-color" content="#111827">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+.load-number-action-button {
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 700;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+.load-actions-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+.load-actions-box {
+    width: 100%;
+    max-width: 380px;
+
+    background: white;
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.25);
+}
+
+
+.load-actions-box h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+
+.load-actions-box > button:not(.load-actions-close) {
+    width: 100%;
+
+    padding: 14px;
+    margin-bottom: 10px;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.load-actions-close {
+    float: right;
+
+    border: none;
+    background: none;
+
+    font-size: 26px;
+    cursor: pointer;
+}
 /* =========================
    WEEKLY LOAD DETAILS
 ========================= */
@@ -3265,6 +3337,9 @@ function closeDailyLoadDetails() {
     }
 
 }
+let selectedLoadActionId = null;
+
+
 function showLoadActions(id) {
 
     const load = loads.find(
@@ -3276,34 +3351,54 @@ function showLoadActions(id) {
         return;
     }
 
+    selectedLoadActionId = id;
 
-    const choice = prompt(
-`Load ${load.loadNumber}
+    document.getElementById(
+        "loadActionsTitle"
+    ).textContent =
+        "Load " + load.loadNumber;
 
-Choose an action:
-
-1 - Invoice
-2 - Copy Message
-3 - Edit
-4 - Delete
-
-Enter 1, 2, 3, or 4:`
-    );
+    document.getElementById(
+        "loadActionsModal"
+    ).style.display = "flex";
+}
 
 
-    if (choice === "1") {
+function closeLoadActions() {
+
+    document.getElementById(
+        "loadActionsModal"
+    ).style.display = "none";
+
+    selectedLoadActionId = null;
+}
+
+
+function runLoadAction(action) {
+
+    const id =
+        selectedLoadActionId;
+
+    if (!id) {
+        return;
+    }
+
+    closeLoadActions();
+
+
+    if (action === "invoice") {
 
         printInvoice(id);
 
-    } else if (choice === "2") {
+    } else if (action === "message") {
 
         copyDriverMessage(id);
 
-    } else if (choice === "3") {
+    } else if (action === "edit") {
 
         editLoad(id);
 
-    } else if (choice === "4") {
+    } else if (action === "delete") {
 
         deleteLoad(id);
 
@@ -7569,7 +7664,55 @@ async function deleteDriver(id) {
 
 }
 </script>
+<div
+    id="loadActionsModal"
+    class="load-actions-modal"
+    style="display:none;"
+>
+    <div class="load-actions-box">
 
+        <button
+            type="button"
+            class="load-actions-close"
+            onclick="closeLoadActions()"
+        >
+            ×
+        </button>
+
+        <h3 id="loadActionsTitle">
+            Load Actions
+        </h3>
+
+        <button
+            type="button"
+            onclick="runLoadAction('invoice')"
+        >
+            Invoice
+        </button>
+
+        <button
+            type="button"
+            onclick="runLoadAction('message')"
+        >
+            Copy Message
+        </button>
+
+        <button
+            type="button"
+            onclick="runLoadAction('edit')"
+        >
+            Edit Load
+        </button>
+
+        <button
+            type="button"
+            onclick="runLoadAction('delete')"
+        >
+            Delete Load
+        </button>
+
+    </div>
+</div>
 </body>
 <script>
 if ("serviceWorker" in navigator) {
