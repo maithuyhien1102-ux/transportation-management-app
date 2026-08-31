@@ -3012,22 +3012,27 @@ function showDailyLoads(date) {
 
                         <div class="daily-load-main">
 
-                            <button
-                                type="button"
-                                class="daily-load-number-button"
-                                onclick="editLoad(${load.id})"
-                            >
-                                ${load.loadNumber}
-                            </button>
+    <div>
+        <div style="font-weight:700; margin-bottom:4px;">
+            ${load.customer || ""}
+        </div>
 
-                            <span>
-                                ${load.pickup || ""}
-                                ${load.pickup ? " → " : ""}
-                                ${load.delivery || ""}
-                            </span>
+        <button
+            type="button"
+            class="daily-load-number-button"
+            onclick="editLoad(${load.id})"
+        >
+            ${load.loadNumber}
+        </button>
+    </div>
 
-                        </div>
+    <span>
+        ${load.pickup || ""}
+        ${load.pickup ? " → " : ""}
+        ${load.delivery || ""}
+    </span>
 
+</div>
 
                         <div class="daily-load-info">
 
