@@ -3265,6 +3265,51 @@ function closeDailyLoadDetails() {
     }
 
 }
+function showLoadActions(id) {
+
+    const load = loads.find(
+        item => item.id === id
+    );
+
+    if (!load) {
+        alert("Load not found.");
+        return;
+    }
+
+
+    const choice = prompt(
+`Load ${load.loadNumber}
+
+Choose an action:
+
+1 - Invoice
+2 - Copy Message
+3 - Edit
+4 - Delete
+
+Enter 1, 2, 3, or 4:`
+    );
+
+
+    if (choice === "1") {
+
+        printInvoice(id);
+
+    } else if (choice === "2") {
+
+        copyDriverMessage(id);
+
+    } else if (choice === "3") {
+
+        editLoad(id);
+
+    } else if (choice === "4") {
+
+        deleteLoad(id);
+
+    }
+
+}
 /* =========================
    ADD LOAD
 ========================= */
@@ -5303,7 +5348,15 @@ const sortedList = [...list].sort((a, b) => {
 
         row.innerHTML = `
 
-   <td>${load.loadNumber}</td>
+   <td>
+    <button
+        type="button"
+        class="load-number-action-button"
+        onclick="showLoadActions(${load.id})"
+    >
+        ${load.loadNumber}
+    </button>
+</td>
 
 <td>${load.customer}</td>
 
