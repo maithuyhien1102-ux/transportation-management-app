@@ -3,10 +3,9 @@ const CACHE_NAME = "freedom-life-transport-v4";
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
-    "./manifest.json"
+    "./manifest.json",
     "./fl-icon.png"
 ];
-
 /* =========================
    INSTALL
 ========================= */
