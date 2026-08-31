@@ -5507,7 +5507,53 @@ function getWeekStart(dateString) {
         dayOfMonth
     );
 }
+/* =========================
+   GET WEEK NUMBER
+========================= */
 
+function getWeekNumber(dateString) {
+
+    const date = new Date(
+        dateString + "T00:00:00"
+    );
+
+    const target = new Date(date.valueOf());
+
+    const dayNumber =
+        (date.getDay() + 6) % 7;
+
+    target.setDate(
+        target.getDate() - dayNumber + 3
+    );
+
+    const firstThursday =
+        new Date(
+            target.getFullYear(),
+            0,
+            4
+        );
+
+    const firstDayNumber =
+        (firstThursday.getDay() + 6) % 7;
+
+    firstThursday.setDate(
+        firstThursday.getDate() -
+        firstDayNumber +
+        3
+    );
+
+    return (
+        1 +
+        Math.round(
+            (
+                target -
+                firstThursday
+            ) /
+            (7 * 24 * 60 * 60 * 1000)
+        )
+    );
+
+}
 /* =========================
    WEEKLY SUMMARY
 ========================= */
@@ -5690,8 +5736,9 @@ function updateWeeklySummary() {
                 <tr>
 
                     <td>
-                        Week starting ${week}
-                    </td>
+    Week ${getWeekNumber(week)}
+    (${week})
+</td>
 
                     <td>
                         ${item.loads}
