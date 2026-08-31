@@ -1273,6 +1273,52 @@ tbody tr:hover {
     }
 
 }
+/* =========================
+   COMPACT LOAD RECORDS CARDS
+========================= */
+
+#loads-section > .dashboard {
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+#loads-section > .dashboard .card {
+    padding: 12px;
+}
+
+#loads-section > .dashboard .card h3 {
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+#loads-section > .dashboard .card p {
+    font-size: 18px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    #loads-section > .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 7px;
+    }
+
+    #loads-section > .dashboard .card {
+        padding: 9px;
+    }
+
+    #loads-section > .dashboard .card h3 {
+        font-size: 9px;
+        margin-bottom: 3px;
+    }
+
+    #loads-section > .dashboard .card p {
+        font-size: 15px;
+    }
+
+}
 </style>
 
 
