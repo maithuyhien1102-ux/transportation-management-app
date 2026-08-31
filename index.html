@@ -5138,12 +5138,42 @@ function displayLoads() {
 
 function displayLoadList(list) {
 
-    const table =
-        document.getElementById(
-            "loadTable"
-        );
+    const sortedList = [...list].sort((a, b) => {
 
-    table.innerHTML = "";
+    function getPickupTime(pickup) {
+
+        if (!pickup || pickup.trim() === "") {
+            return -1;
+        }
+
+        const match = pickup
+            .toUpperCase()
+            .match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/);
+
+        if (!match) {
+            return -1;
+        }
+
+        let hour = parseInt(match[1]);
+        const minute = parseInt(match[2] || "0");
+        const period = match[3];
+
+        if (period === "PM" && hour !== 12) {
+            hour += 12;
+        }
+
+        if (period === "AM" && hour === 12) {
+            hour = 0;
+        }
+
+        return hour * 60 + minute;
+    }
+
+    return getPickupTime(a.pickup) - getPickupTime(b.pickup);
+});
+
+
+sortedList.forEach(load => {
 
 
     list.forEach(load => {
