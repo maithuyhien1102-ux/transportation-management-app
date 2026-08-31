@@ -1414,6 +1414,47 @@ tbody tr:hover {
     }
 
 }
+/* =========================
+   DRIVER WEEK NAVIGATION
+========================= */
+
+.driver-week-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.driver-week-navigation button {
+    width: auto;
+    padding: 8px 14px;
+    background: #111827;
+    color: white;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.driver-week-navigation button:hover {
+    background: #2563eb;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .driver-week-navigation {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+
+    .driver-week-navigation button {
+        width: 100%;
+    }
+
+}
 </style>
 
 
@@ -4006,44 +4047,78 @@ function displayDriverList(driversList) {
     });
 
 }
+// =========================
+// DRIVER WEEKLY LOADS
+// =========================
+
+let selectedDriverForWeeklyView = null;
+let selectedDriverWeekOffset = 0;
+
+
 function showDriverWeeklyLoads(driverName) {
 
-    const details =
-        document.getElementById("driverWeeklyDetails");
+    selectedDriverForWeeklyView = driverName;
+    selectedDriverWeekOffset = 0;
 
-    if (!details) {
-        console.error("Driver weekly details container not found.");
+    renderDriverWeeklyLoads();
+
+}
+
+
+function renderDriverWeeklyLoads() {
+
+    const driverName =
+        selectedDriverForWeeklyView;
+
+    const details =
+        document.getElementById(
+            "driverWeeklyDetails"
+        );
+
+    if (!details || !driverName) {
         return;
     }
 
+
     // =========================
     // GET CURRENT WEEK
-    // MONDAY - SUNDAY
     // =========================
 
     const today = new Date();
 
-    const day = today.getDay();
-
-    const monday = new Date(today);
+    const currentDay =
+        today.getDay();
 
     const daysFromMonday =
-        day === 0 ? 6 : day - 1;
+        currentDay === 0
+            ? 6
+            : currentDay - 1;
+
+
+    const monday =
+        new Date(today);
 
     monday.setDate(
-        today.getDate() - daysFromMonday
+        today.getDate()
+        - daysFromMonday
+        + (selectedDriverWeekOffset * 7)
     );
 
-    monday.setHours(0, 0, 0, 0);
+    monday.setHours(
+        0, 0, 0, 0
+    );
 
 
-    const sunday = new Date(monday);
+    const sunday =
+        new Date(monday);
 
     sunday.setDate(
         monday.getDate() + 6
     );
 
-    sunday.setHours(23, 59, 59, 999);
+    sunday.setHours(
+        23, 59, 59, 999
+    );
 
 
     // =========================
@@ -4053,12 +4128,20 @@ function showDriverWeeklyLoads(driverName) {
     const driverLoads =
         loads.filter(load => {
 
-            if (load.driver !== driverName) {
+            if (
+                load.driver !== driverName
+            ) {
+                return false;
+            }
+
+            if (!load.date) {
                 return false;
             }
 
             const loadDate =
-                new Date(load.date + "T00:00:00");
+                new Date(
+                    load.date + "T00:00:00"
+                );
 
             return (
                 loadDate >= monday &&
@@ -4075,16 +4158,20 @@ function showDriverWeeklyLoads(driverName) {
     const totalRevenue =
         driverLoads.reduce(
             (total, load) =>
-                total + Number(load.rate || 0),
+                total +
+                Number(load.rate || 0),
             0
         );
+
 
     const totalDriverPay =
         driverLoads.reduce(
             (total, load) =>
-                total + Number(load.driverPay || 0),
+                total +
+                Number(load.driverPay || 0),
             0
         );
+
 
     const totalProfit =
         totalRevenue -
@@ -4092,30 +4179,87 @@ function showDriverWeeklyLoads(driverName) {
 
 
     // =========================
-    // FORMAT DATES
+    // DATE FORMAT
     // =========================
 
-    const formatDate =
-        date =>
-            date.toLocaleDateString(
-                "en-US",
-                {
-                    month: "numeric",
-                    day: "numeric",
-                    year: "numeric"
-                }
+    function formatDate(date) {
+
+        return date.toLocaleDateString(
+            "en-US",
+            {
+                month: "numeric",
+                day: "numeric",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+    // =========================
+    // WEEK NUMBER
+    // =========================
+
+    function getWeekNumber(date) {
+
+        const temp =
+            new Date(
+                Date.UTC(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate()
+                )
             );
+
+        const dayNum =
+            temp.getUTCDay() || 7;
+
+        temp.setUTCDate(
+            temp.getUTCDate()
+            + 4
+            - dayNum
+        );
+
+        const yearStart =
+            new Date(
+                Date.UTC(
+                    temp.getUTCFullYear(),
+                    0,
+                    1
+                )
+            );
+
+        return Math.ceil(
+            (
+                (
+                    (
+                        temp -
+                        yearStart
+                    ) / 86400000
+                ) + 1
+            ) / 7
+        );
+
+    }
+
+
+    const weekNumber =
+        getWeekNumber(monday);
 
 
     // =========================
     // DISPLAY
     // =========================
 
-    details.style.display = "block";
+    details.style.display =
+        "block";
+
 
     details.innerHTML = `
 
-        <div class="driver-weekly-details-header">
+        <div
+            class="driver-weekly-details-header"
+        >
 
             <div>
 
@@ -4128,12 +4272,15 @@ function showDriverWeeklyLoads(driverName) {
                 </p>
 
                 <p>
+                    Week ${weekNumber}
+                    —
                     ${formatDate(monday)}
                     -
                     ${formatDate(sunday)}
                 </p>
 
             </div>
+
 
             <button
                 type="button"
@@ -4146,11 +4293,49 @@ function showDriverWeeklyLoads(driverName) {
         </div>
 
 
+        <!-- =========================
+             WEEK NAVIGATION
+        ========================= -->
+
+        <div class="driver-week-navigation">
+
+            <button
+                type="button"
+                onclick="changeDriverWeek(-1)"
+            >
+                ← Previous Week
+            </button>
+
+
+            <button
+                type="button"
+                onclick="goToCurrentDriverWeek()"
+            >
+                Current Week
+            </button>
+
+
+            <button
+                type="button"
+                onclick="changeDriverWeek(1)"
+            >
+                Next Week →
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             DRIVER STATS
+        ========================= -->
+
         <div class="driver-stats">
 
             <div class="driver-stat-card">
 
-                <span>Total Loads</span>
+                <span>
+                    Total Loads
+                </span>
 
                 <strong>
                     ${driverLoads.length}
@@ -4161,7 +4346,9 @@ function showDriverWeeklyLoads(driverName) {
 
             <div class="driver-stat-card">
 
-                <span>Revenue</span>
+                <span>
+                    Revenue
+                </span>
 
                 <strong>
                     $${totalRevenue.toFixed(2)}
@@ -4172,7 +4359,9 @@ function showDriverWeeklyLoads(driverName) {
 
             <div class="driver-stat-card">
 
-                <span>Driver Pay</span>
+                <span>
+                    Driver Pay
+                </span>
 
                 <strong>
                     $${totalDriverPay.toFixed(2)}
@@ -4183,7 +4372,9 @@ function showDriverWeeklyLoads(driverName) {
 
             <div class="driver-stat-card">
 
-                <span>Load Profit</span>
+                <span>
+                    Load Profit
+                </span>
 
                 <strong>
                     $${totalProfit.toFixed(2)}
@@ -4194,34 +4385,48 @@ function showDriverWeeklyLoads(driverName) {
         </div>
 
 
-        <h4 class="driver-weekly-load-title">
+        <!-- =========================
+             LOADS
+        ========================= -->
+
+        <h4
+            class="driver-weekly-load-title"
+        >
             Loads This Week
         </h4>
 
 
-        <div class="driver-weekly-load-list">
+        <div
+            class="driver-weekly-load-list"
+        >
 
             ${
                 driverLoads.length === 0
 
                 ?
 
-                `<p class="no-driver-loads">
-                    No loads found for ${driverName}
+                `
+                <p class="no-driver-loads">
+                    No loads found for
+                    ${driverName}
                     this week.
-                </p>`
+                </p>
+                `
 
                 :
 
                 driverLoads
                     .sort(
                         (a, b) =>
-                            new Date(a.date) -
+                            new Date(a.date)
+                            -
                             new Date(b.date)
                     )
                     .map(load => `
 
-                        <div class="driver-weekly-load">
+                        <div
+                            class="driver-weekly-load"
+                        >
 
                             <div>
 
@@ -4254,12 +4459,16 @@ function showDriverWeeklyLoads(driverName) {
                             <div>
 
                                 <strong>
-                                    $${Number(load.rate || 0).toFixed(2)}
+                                    $${Number(
+                                        load.rate || 0
+                                    ).toFixed(2)}
                                 </strong>
 
                                 <span>
                                     Driver Pay:
-                                    $${Number(load.driverPay || 0).toFixed(2)}
+                                    $${Number(
+                                        load.driverPay || 0
+                                    ).toFixed(2)}
                                 </span>
 
                             </div>
@@ -4274,14 +4483,61 @@ function showDriverWeeklyLoads(driverName) {
 
     `;
 
-    // Scroll to the details
+
     details.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
+
 }
 
 
+// =========================
+// CHANGE DRIVER WEEK
+// =========================
+
+function changeDriverWeek(direction) {
+
+    selectedDriverWeekOffset +=
+        direction;
+
+    renderDriverWeeklyLoads();
+
+}
+
+
+// =========================
+// CURRENT WEEK
+// =========================
+
+function goToCurrentDriverWeek() {
+
+    selectedDriverWeekOffset = 0;
+
+    renderDriverWeeklyLoads();
+
+}
+
+
+// =========================
+// CLOSE DETAILS
+// =========================
+
+function closeDriverWeeklyDetails() {
+
+    const details =
+        document.getElementById(
+            "driverWeeklyDetails"
+        );
+
+    if (details) {
+
+        details.style.display =
+            "none";
+
+    }
+
+}
 function closeDriverWeeklyDetails() {
 
     const details =
